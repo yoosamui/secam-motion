@@ -19,7 +19,7 @@ RPI, Lunux, Windows or Mac.
 The camera settings are very importand to consider if you want best result you will need to
 configure the camera settings with specific parameters.
 
-
+...
 
 
 
