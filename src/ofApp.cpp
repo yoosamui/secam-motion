@@ -46,20 +46,16 @@ void ofApp::setup()
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
 
-    //   m_writer.startThread();
-    // m_cmd.startThread();
     m_processing = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::ofExit()
 {
-    // m_writer.stop();
-    // m_writer.close();
-    // m_writer.stopThread();
-
     m_cmd.startThread();
     m_cmd.ffmpeg_stop();
+
+    cout << "exit" << endl;
 }
 
 //--------------------------------------------------------------
@@ -71,7 +67,7 @@ void ofApp::update()
         m_cam.release();
         ofSleepMillis(500);
 
-        //    m_cam.set(CAP_PROP_CONVERT_RGB, true); //dont work
+        // m_cam.set(CAP_PROP_CONVERT_RGB, true); //dont work
         if (m_cam.open(m_config.settings.uri, CAP_FFMPEG)) {
             cout << "Connected" << endl;
         }
@@ -100,6 +96,7 @@ void ofApp::update()
     cv::putText(m_frame, timestamp, cv::Point(x - 330, y + 24), fontface, scale,
                 cv::Scalar(255, 255, 255), thickness, LINE_AA, false);
 
+    // TODO use ffmpeg for write video
     // add frame to writer
     // m_writer.add(m_frame);
 
@@ -118,9 +115,6 @@ void ofApp::update()
 
             saveDetectionImage();
 
-            // m_writer.startThread();
-            // m_writer.start();
-
             m_cmd.startThread();
             m_cmd.ffmpeg_start();
             common::log("Recording...");
@@ -135,38 +129,14 @@ void ofApp::update()
     }
 
     if (m_recording) {
-        // Mat rgb;
-        // m_frame.copyTo(rgb);
-        // common::bgr2rgb(rgb);
-        // writer.write(rgb);
-
         if (m_timex_second.elapsed()) {
             m_recording_duration--;
             m_timex_second.set();
         }
 
         if (m_timex_stoprecording.elapsed()) {
-            // stop and close video writer
-            // writer.release();
-
-            // string cmd = "pgrep ffmpeg";
-            // common::exec(cmd.c_str());
-
-            // cout << result << endl;
-
-            //    string cmd = "bash stopffmpeg.sh";  //+ result;
-            //    common::exec(cmd.c_str());
-            // m_writer.stopThread();
-
-            // m_writer.stop();
-            // m_writer.close();
-
             m_cmd.stopThread();
             m_cmd.ffmpeg_stop();
-
-            // string cmd = "kill $(pidof ffmpeg) &";  //+ result;
-            // common::exec(cmd.c_str());
-            //  cout << result;
 
             common::log("Recording finish.");
             // not procesing util detector finish.
@@ -273,7 +243,7 @@ string& ofApp::getStatusInfo()
                 (int)m_cam.getFPS(),
                 (int) ofGetFrameRate(),
                 m_framecount,
-        0,//        (int)m_writer.get_queue().size(),
+                0,//        (int)m_writer.get_queue().size(),
                 m_config.settings.minthreshold,
                 m_config.settings.minrectwidth,
                 m_config.settings.mincontoursize,

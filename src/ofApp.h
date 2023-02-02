@@ -12,7 +12,6 @@
 #include "ofMain.h"
 #include "ofxCv.h"
 #include "ofxOpenCv.h"
-#include "videowriter.hpp"
 
 using namespace ofxCv;
 using namespace std;
@@ -50,43 +49,20 @@ class ofApp : public ofBaseApp
     ofPolyline m_polyline;
     ofPolyline m_maskPolyLineScaled;
 
-    //    vector<Point> m_maskPoints;
-
     Mat m_frame;
-    Mat m_mask;
-    Mat m_mask_image;
     Mat m_resized;
-    // Mat m_gray;
-    // Mat m_gray_image;
-    // Mat m_output;
-    // Mat m_threshold;
-    // Mat m_difference;
 
     Config& m_config = m_config.getInstance();
     ofTrueTypeFont m_font;
     input_mode_t m_input_mode = input_mode_t::none;
 
-    // histoty = 500
-    // VarThreshold = 16
+    // histoty = 500  VarThreshold = 16
     Ptr<cv::BackgroundSubtractorMOG2> mog2 = createBackgroundSubtractorMOG2();
-
     ContourFinder m_contour_finder;
-
     Camera m_cam;
-
-    Videowriter m_writer;
-    VideoWriter writer;
     Cmd m_cmd;
     Motion m_motion;
-    //   thread* m_bck_thread = nullptr;
-    //    void thread_function();
-    //   static bool m_run_thread = false;
 
-    // std::thread threadObj(thread_function);
-    //  void resetMask();
-    //  void create_mask();
-
-    //    common::Timex m_timex_detections;
     common::Timex m_timex_stoprecording;
     common::Timex m_timex_second;
     common::Timex m_timex_recording_point;
@@ -99,24 +75,6 @@ class ofApp : public ofBaseApp
     void on_mask_updated();
 
   public:
-    // void startBallMovement()
-    //{
-    // while (true) {
-    // if (m_recording) {
-    // if (!m_frame.empty()) {
-    // Mat rgb;
-    // m_frame.copyTo(rgb);
-    // common::bgr2rgb(rgb);
-
-    // cout << ofGetFrameRate() << endl;
-    // writer.write(rgb);
-    //}
-    //}
-
-    // ofSleepMillis(5);
-    //};
-    //}
-
     void setup();
     void update();
     void draw();
