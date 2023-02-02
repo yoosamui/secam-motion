@@ -1,7 +1,7 @@
 # secam-motion
 
 
-# Camera surveillance with OF and OpenCv
+# Camera surveillance with OF, OpenCV and yolo.
 
 Real-time streaming using the RTSP protocol..
 
