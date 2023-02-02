@@ -1,7 +1,7 @@
 # secam-motion
 
 
-# Camera surveillance with OF and OpenCv
+# Camera surveillance with OF, OpenCV and yolo.
 
 Real-time streaming using the RTSP protocol..
 
@@ -12,7 +12,7 @@ More info about OF [here](https://openframeworks.cc/)
 
 
 Make you own Video System with motion and object detection for
-RPI, Lunux, Windows , Mac
+RPI, Lunux, Windows , Mac.
 
 
 
