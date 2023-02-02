@@ -77,38 +77,11 @@ class Motion : public IMotion
         m_maskPoints = m_config.mask_points;
         create_mask();
     }
-    //#define MANUAL 1
     virtual void update(const Mat& frame)
     {
         convertColor(frame, m_gray, CV_RGB2GRAY);
         resize(m_gray, m_gray, Size(c_width, c_height));
 
-// if (m_config.isServer())
-
-// {
-#ifdef MANUAL
-        if (!m_first_set) {
-            m_gray.copyTo(m_first);
-            m_first_set = true;
-        }
-
-        m_gray.copyTo(m_second);
-
-        // compute the absolute difference between frames
-        absdiff(m_first, m_second, m_difference);
-
-        threshold(m_difference, m_threshold, 50, 255, CV_THRESH_BINARY);
-
-        blur(m_threshold, 3);  //_blur);
-                               // blur(m_threshold, 20);
-        dilate(m_threshold, 1);
-
-        // copy and add mask
-        m_threshold.copyTo(m_output, m_mask);
-        //        m_gray.copyTo(m_mask_image, m_mask);
-        m_gray.copyTo(m_gray_image, m_mask);
-#else
-        //  } else {
         m_gray.copyTo(m_gray_image, m_mask);
         blur(m_gray, c_blur);
 
@@ -117,15 +90,8 @@ class Motion : public IMotion
 
         // threshold shadows
         threshold(m_difference, m_output, c_threshold, 255, CV_THRESH_BINARY);
-        //  }
-#endif
+
         detect();
-#ifdef MANUAL
-        if (m_timex_background.elapsed() && m_first_set) {
-            m_gray.copyTo(m_first);
-            m_timex_background.set();
-        }
-#endif
     }
 
     virtual void detect()
@@ -178,7 +144,6 @@ class Motion : public IMotion
     {
         m_maskPoints.clear();
         m_polyline.clear();
-        //    m_maskPolyLineScaled.clear();
     }
 
     void create_mask()
@@ -202,42 +167,13 @@ class Motion : public IMotion
 
         // Notify client
         ofNotifyEvent(on_mask_updated, this);
-        /*
-                m_maskPolyLineScaled.clear();
-
-                if (m_maskPoints.size()) {
-                    for (const auto p : m_maskPoints) {
-                        m_maskPolyLineScaled.lineTo(p.x, p.y);
-                    }
-
-                    float scalex = static_cast<float>(m_cam_width * 100 / c_width) / 100;
-                    float scaley = static_cast<float>(m_cam_height * 100 / c_height) / 100;
-
-                    m_maskPolyLineScaled.scale(scalex, scaley);
-                }
-                */
     }
 
-    int getWidth() const
-    {
-        return c_width;
-    }
-    int getHeight() const
-    {
-        return c_height;
-    }
+    int getWidth() const { return c_width; }
+    int getHeight() const { return c_height; }
 
-    cv::Mat& getGrayImage()
-    {
-        return m_gray_image;
-    }
-    cv::Mat& getOutputImage()
-    {
-        return m_output;
-    }
+    cv::Mat& getGrayImage() { return m_gray_image; }
+    cv::Mat& getOutputImage() { return m_output; }
 
-    const vector<Point>& getMaskPoints() const
-    {
-        return m_maskPoints;
-    }
+    const vector<Point>& getMaskPoints() const { return m_maskPoints; }
 };

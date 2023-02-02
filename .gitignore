@@ -18,7 +18,7 @@ tags
 obj/
 *.cfg
 *.xml
-bin/motion
+bin/secan-motion
 bin/data/
 *.log
 server
