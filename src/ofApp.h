@@ -5,6 +5,7 @@
 
 #include "camera.hpp"
 #include "cmd.hpp"
+#include "command.hpp"
 #include "common.h"
 #include "config.h"
 #include "constants.h"
@@ -60,8 +61,10 @@ class ofApp : public ofBaseApp
     Ptr<cv::BackgroundSubtractorMOG2> mog2 = createBackgroundSubtractorMOG2();
     ContourFinder m_contour_finder;
     Camera m_cam;
-    Cmd m_cmd;
     Motion m_motion;
+
+    CommandRecording m_cmd_recording;
+    CommandWriter m_cmd_writer;
 
     common::Timex m_timex_stoprecording;
     common::Timex m_timex_second;
@@ -73,6 +76,7 @@ class ofApp : public ofBaseApp
     void on_motion(Rect& r);
     void on_motion_detected(Rect& r);
     void on_mask_updated();
+    void on_finish_detections(int& count);
 
   public:
     void setup();

@@ -72,6 +72,30 @@ namespace common
         return nowSs.str();
     }
 
+    string get_filepath(const string& prefix, const string& extension, int ret)
+    {
+        string m_source_dir;
+        string m_file;
+
+        Config& m_config = m_config.getInstance();
+
+        const string timestamp = getTimestamp(m_config.settings.timezone, "%T");
+        const string timestampMillis = getTimestampMillis(m_config.settings.timezone, "%T");
+
+        try {
+            m_source_dir =
+                m_config.settings.storage + common::getTimestamp(m_config.settings.timezone, "%F");
+            boost::filesystem::create_directory(m_source_dir);
+
+        } catch (boost::filesystem::filesystem_error& e) {
+            common::log(e.what(), OF_LOG_ERROR);
+        }
+
+        m_file = "/" + timestampMillis + "_" + prefix + extension;
+
+        return ret == 0 ? m_source_dir : m_source_dir + m_file;
+    }
+
     /*
      *  ausume t hast yyyy.mm.dd hh:mm:ss format
      *  and the length must be 19 characters.

@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 //#include "ofThread.h"
+#include "config.h"
 #include "ofxCv.h"
 #include "ofxOpenCv.h"
 
@@ -17,6 +18,7 @@ namespace common
     int getSeconds(const string& t);
     int getHours(const string& t);
 
+    string get_filepath(const string& prefix, const string& extension, int ret = 0);
     string getElapsedTimeString();
     string getTimestampMillis(const string& time_zone, const string& format_string = "%Y.%m.%d %T");
     string getTimestamp(const string& time_zone, const string& format_string = "%Y.%m.%d %T");
