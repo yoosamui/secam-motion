@@ -11,12 +11,12 @@
 namespace bfs = boost::filesystem;
 
 static const string keys =
-    "{ help h   |       | print help message. }"
+    "{ help help|       | print help message. }"
     "{ camera c |       | load the camera config.cfg file and starts streaming. }"
     "{ mode m   | 0     | start secam as client = 0 or server = 1 instance.}"
     "{ fps  f   | 30    | frame rate.}"
-    "{ width x  | 640   | view width. }"
-    "{ height y | 360   | view height. }";
+    "{ width w  | 640   | view width. }"
+    "{ height h | 360   | view height. }";
 
 int main(int argc, char* argv[])
 {
