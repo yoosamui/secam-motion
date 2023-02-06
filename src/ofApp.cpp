@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-//#define ENABLE_RECORDING
+#define ENABLE_RECORDING
 #define ENABLE_WRITER
 
 //--------------------------------------------------------------
@@ -42,7 +42,7 @@ void ofApp::setup()
     ofAddListener(m_motion.on_motion, this, &ofApp::on_motion);
     ofAddListener(m_motion.on_motion_detected, this, &ofApp::on_motion_detected);
     ofAddListener(m_motion.on_mask_updated, this, &ofApp::on_mask_updated);
-    // n    ofAddListener(m_detector.on_finish_detections, this, &ofApp::on_finish_detections);
+    //  ofAddListener(m_detector.on_finish_detections, this, &ofApp::on_finish_detections);
 
     m_motion.init();
 
@@ -151,13 +151,9 @@ void ofApp::update()
 #ifdef ENABLE_RECORDING
             m_cmd_recording.stop();
             m_cmd_recording.stopThread();
-
-            // string m_command = "/bin/bash stop-recorder.sh";
-            // common::exec(m_command.c_str());
-            // cout << "Kill command executed " << endl;
-
             common::log("Recording finish.");
 #endif
+
 #ifdef ENABLE_WRITER
             m_cmd_writer.start();
             common::log("Detector started.");
