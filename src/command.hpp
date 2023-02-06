@@ -74,12 +74,9 @@ class CommandRecording : public Command
 
     void stop() override
     {
-        cout << "--------------------------------------------------------------------" << endl;
         m_command = "bash stop-recorder.sh";
         common::exec(m_command.c_str());
-        cout << "Kill command executed " << endl;
-
-        //        m_processing = true;
+        common::log("Kill command executed ");
     }
 };
 
@@ -157,7 +154,7 @@ class CommandWriter : public ofThread
         common::bgr2rgb(rgb);
 
         m_queue.push(rgb);
-        cout << " add " << endl;
+        cout << "add probe." << endl;
     }
 
     void start()
@@ -172,6 +169,9 @@ class CommandWriter : public ofThread
         while (isThreadRunning()) {
             while (m_processing) {
                 int count = 0;
+                if (!m_queue.empty()) {
+                    common::log("Create images...");
+                }
                 while (m_queue.size()) {
                     Mat image = m_queue.front();
                     m_queue.pop();
@@ -186,7 +186,7 @@ class CommandWriter : public ofThread
                 cout << "Detection finish." << endl;
                 m_processing = false;
             }
-            ofSleepMillis(100);
+            ofSleepMillis(10);
         }
     }
 

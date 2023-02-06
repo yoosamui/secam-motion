@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
-#define ENABLE_RECORDING 1
-//#define ENABLE_WRITER 1
+//#define ENABLE_RECORDING
+#define ENABLE_WRITER
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -59,7 +59,8 @@ void ofApp::setup()
 //--------------------------------------------------------------
 void ofApp::ofExit()
 {
-    //  m_cmd_recording.stop();
+    m_cmd_recording.stop();
+    m_cmd_recording.stopThread();
     cout << "exit" << endl;
 }
 
@@ -158,8 +159,8 @@ void ofApp::update()
             common::log("Recording finish.");
 #endif
 #ifdef ENABLE_WRITER
-            common::log("Detector starts....");
             m_cmd_writer.start();
+            common::log("Detector started.");
 #endif
 
             m_recording_duration = c_videoduration;
@@ -339,7 +340,9 @@ void ofApp::on_motion_detected(Rect& r)
     m_detected.scale(sx, sy);
 
 #ifdef ENABLE_WRITER
-    m_cmd_writer.add(m_frame);
+    if (m_framecount % 30) {
+        m_cmd_writer.add(m_frame);
+    }
 #endif
 }
 
