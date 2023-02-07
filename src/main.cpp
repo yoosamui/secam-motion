@@ -14,7 +14,7 @@ static const string keys =
     "{ help help|       | print help message. }"
     "{ camera c |       | load the camera config.cfg file and starts streaming. }"
     "{ mode m   | 0     | start secam as client = 0 or server = 1 instance.}"
-    "{ rec  r   | 0     | Use the internal video = 0, 1 = external recording.}"
+    "{ rec  r   | 1     | Use the internal video = 0, 1 = external recording.}"
     "{ dec  d   | 1     | Use the object detector.}"
     "{ fps  f   | 30    | frame rate.}"
     "{ width w  | 640   | view width. }"
