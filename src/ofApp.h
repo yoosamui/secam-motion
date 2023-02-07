@@ -4,7 +4,6 @@
 #include <string>
 
 #include "camera.hpp"
-#include "cmd.hpp"
 #include "command.hpp"
 #include "common.h"
 #include "config.h"
@@ -13,6 +12,7 @@
 #include "ofMain.h"
 #include "ofxCv.h"
 #include "ofxOpenCv.h"
+#include "videowriter.hpp"
 
 using namespace ofxCv;
 using namespace std;
@@ -64,11 +64,13 @@ class ofApp : public ofBaseApp
     Motion m_motion;
 
     CommandRecording m_cmd_recording;
-    CommandWriter m_cmd_writer;
+    CommandWriter m_cmd_image_writer;
+    Videowriter m_video_writer;
 
     common::Timex m_timex_stoprecording;
     common::Timex m_timex_second;
     common::Timex m_timex_recording_point;
+    common::Timex m_timex_add_probe;
 
     string& getStatusInfo();
     void saveDetectionImage();
