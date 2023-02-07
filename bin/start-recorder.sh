@@ -3,7 +3,7 @@
 
 
 # standard
-ffmpeg -i $1 -metadata title="secam by Juan R. Gonzalez"  -vcodec copy -acodec copy $2 -y
+ffmpeg -i $1 -metadata title="secam by Juan R. Gonzalez"  -vcodec copy -acodec copy $2 -y 
 
 
 # FULL-HD 1080p/25fps

@@ -1,5 +1,8 @@
 #include "ofApp.h"
 
+#define ENABLE_RECORDING
+#define ENABLE_WRITER
+
 //--------------------------------------------------------------
 void ofApp::setup()
 {
@@ -39,6 +42,7 @@ void ofApp::setup()
     ofAddListener(m_motion.on_motion, this, &ofApp::on_motion);
     ofAddListener(m_motion.on_motion_detected, this, &ofApp::on_motion_detected);
     ofAddListener(m_motion.on_mask_updated, this, &ofApp::on_mask_updated);
+    //  ofAddListener(m_detector.on_finish_detections, this, &ofApp::on_finish_detections);
 
     m_motion.init();
 
@@ -46,15 +50,17 @@ void ofApp::setup()
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
 
+#ifdef ENABLE_WRITER
+    m_cmd_writer.startThread();
+#endif
     m_processing = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::ofExit()
 {
-    m_cmd.startThread();
-    m_cmd.ffmpeg_stop();
-
+    m_cmd_recording.stop();
+    m_cmd_recording.stopThread();
     cout << "exit" << endl;
 }
 
@@ -113,11 +119,18 @@ void ofApp::update()
         if (!m_recording) {
             m_recording = true;
 
+            // save the detection image
             saveDetectionImage();
 
-            m_cmd.startThread();
-            m_cmd.ffmpeg_start();
+#ifdef ENABLE_WRITER
+            m_cmd_writer.setPath();
+#endif
+
+#ifdef ENABLE_RECORDING
+            m_cmd_recording.startThread();
+            m_cmd_recording.start();
             common::log("Recording...");
+#endif
 
             ofResetElapsedTimeCounter();
         }
@@ -135,13 +148,16 @@ void ofApp::update()
         }
 
         if (m_timex_stoprecording.elapsed()) {
-            m_cmd.stopThread();
-            m_cmd.ffmpeg_stop();
-
+#ifdef ENABLE_RECORDING
+            m_cmd_recording.stop();
+            m_cmd_recording.stopThread();
             common::log("Recording finish.");
-            // not procesing util detector finish.
-            //////////   m_processing = false;
-            //////     m_detector.detect();
+#endif
+
+#ifdef ENABLE_WRITER
+            m_cmd_writer.start();
+            common::log("Detector started.");
+#endif
 
             m_recording_duration = c_videoduration;
             m_recording = false;
@@ -270,7 +286,7 @@ void ofApp::saveDetectionImage()
     cv::putText(img, text, cv::Point(r.x, r.y - 10), cv::FONT_HERSHEY_DUPLEX, 0.5,
                 cv::Scalar(0, 255, 0), 0.5, false);
 
-    string filename = m_cmd.get_filepath("motion_" + m_config.parameters.camname, ".jpg", 1);
+    string filename = common::get_filepath("motion_" + m_config.parameters.camname, ".jpg", 1);
     cv::rectangle(img, r, cv::Scalar(0, 0, 255), 2);
 
     imwrite(filename, img);
@@ -318,6 +334,21 @@ void ofApp::on_motion_detected(Rect& r)
     float sy = static_cast<float>(m_frame.rows * 100 / m_motion.getHeight()) / 100;
 
     m_detected.scale(sx, sy);
+
+#ifdef ENABLE_WRITER
+    if (m_framecount % 30) {
+        m_cmd_writer.add(m_frame);
+    }
+#endif
+}
+
+//--------------------------------------------------------------
+void ofApp::on_finish_detections(int& count)
+{
+    m_processing = true;
+    common::log("Finish detections :" + to_string(count));
+
+    // m_detector.stopThread();
 }
 
 //--------------------------------------------------------------
