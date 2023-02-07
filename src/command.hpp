@@ -19,8 +19,6 @@ class ICommand
   public:
     virtual void start() = 0;
     virtual void stop() = 0;
-    //    virtual string get_filepath(const string& prefix, const string& extension, int ret = 0) =
-    //    0; virtual void threadedFunction();
 };
 
 class Command : public ofThread, ICommand
@@ -48,7 +46,7 @@ class Command : public ofThread, ICommand
                 if (!_commnand_set) {
                     _commnand_set = true;
                     common::exec(m_command.c_str());
-                    cout << "CMD :" << m_command << endl;
+                    common::log("CMD :" + m_command);
                 }
 
                 m_processing = false;
@@ -96,16 +94,8 @@ class CommandDetector : public Command
 
     void start() override
     {
-        if (m_processing) return;
-
-        // string source_filename =
-        // common::get_filepath("motion_" + m_config.parameters.camname, ".jpg", 1);
-        // string destination_filename =
-        // common::get_filepath("PERSON_" + m_config.parameters.camname, ".jpg", 1);
-
         m_command = "./objdetector " + m_directory + " " + m_destination_file;
         common::exec(m_command.c_str());
-        //     m_processing = true;
     }
 };
 
@@ -113,7 +103,9 @@ class CommandDetector : public Command
 class CommandWriter : public ofThread
 {
     queue<Mat> m_queue;
+
     bool m_processing = false;
+
     string m_filename;
     string m_directory;
 
@@ -122,11 +114,7 @@ class CommandWriter : public ofThread
     CommandDetector m_cmd_detector;
 
   public:
-    CommandWriter()
-    {
-        // start thread
-        //    m_cmd_detector.startThread();
-    }
+    CommandWriter() {}
 
     void setPath()
     {
@@ -137,8 +125,6 @@ class CommandWriter : public ofThread
                       common::getTimestamp(m_config.settings.timezone, "%T");
 
         boost::filesystem::create_directory(m_directory);
-
-        cout << m_directory << endl;
     }
 
     void add(const Mat& frame)
@@ -154,7 +140,7 @@ class CommandWriter : public ofThread
         common::bgr2rgb(rgb);
 
         m_queue.push(rgb);
-        cout << "add probe." << endl;
+        common::log("add probe.");
     }
 
     void start()
@@ -181,7 +167,7 @@ class CommandWriter : public ofThread
                     cout << filename << endl;
                 }
 
-                string command = "bash start-detector.sh " + m_directory + " " + m_filename + " &";
+                string command = "bash start-detector.sh " + m_directory + " " + m_filename;
                 common::exec(command.c_str());
                 cout << "Detection finish." << endl;
                 m_processing = false;
