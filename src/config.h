@@ -14,6 +14,7 @@ class Config
         int height;
         int mode;
         int fps;
+        int recordmode;
     };
 
   private:
