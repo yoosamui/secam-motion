@@ -43,7 +43,6 @@ void ofApp::setup()
     ofAddListener(m_motion.on_motion, this, &ofApp::on_motion);
     ofAddListener(m_motion.on_motion_detected, this, &ofApp::on_motion_detected);
     ofAddListener(m_motion.on_mask_updated, this, &ofApp::on_mask_updated);
-    //  ofAddListener(m_detector.on_finish_detections, this, &ofApp::on_finish_detections);
 
     m_motion.init();
 
@@ -367,8 +366,6 @@ void ofApp::on_finish_detections(int& count)
 {
     m_processing = true;
     common::log("Finish detections :" + to_string(count));
-
-    // m_detector.stopThread();
 }
 
 //--------------------------------------------------------------
@@ -427,11 +424,9 @@ void ofApp::mousePressed(int x, int y, int button)
 {
     if (m_input_mode == input_mode_t::mask) {
         if (button == 0) {
-            //   if (x < 320 /*m_motion.getWidth()*/ && y < 240 /*m_motion.getHeight()*/) {
             m_polyline.lineTo(x, y);
             m_mask_linex = x;
             m_mask_liney = y;
-            // }
 
         } else if (button == 2) {
             if (m_polyline.size() > 1) {
