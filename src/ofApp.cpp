@@ -30,6 +30,7 @@ void ofApp::setup()
        << "minthreshold = " << m_config.settings.minthreshold << "\n"
        << "mincontousize =  " << m_config.settings.mincontoursize << "\n"
        << "detectionsmaxcount = " << m_config.settings.detectionsmaxcount << "\n"
+       << "recordingmode = " << m_config.parameters.recordmode << "\n"
        << endl;
 
     common::log(ss.str());
@@ -49,10 +50,12 @@ void ofApp::setup()
     m_timex_stoprecording.setLimit(c_videoduration * 1000);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
+    m_timex_add_probe.setLimit(2000);
 
 #ifdef ENABLE_WRITER
-    m_cmd_writer.startThread();
+    m_cmd_image_writer.startThread();
 #endif
+
     m_processing = true;
 }
 
@@ -102,11 +105,14 @@ void ofApp::update()
     cv::putText(m_frame, timestamp, cv::Point(x - 330, y + 24), fontface, scale,
                 cv::Scalar(255, 255, 255), thickness, LINE_AA, false);
 
-    // TODO use ffmpeg for write video
-    // add frame to writer
-    // m_writer.add(m_frame);
-
     cv::resize(m_frame, m_resized, cv::Size(m_width, m_height));
+
+#ifdef ENABLE_RECORDING
+    // use internal video writer
+    if (m_config.parameters.recordmode) {
+        m_video_writer.add(m_frame);
+    }
+#endif
 
     m_found_motion.clear();
     m_detected.clear();
@@ -123,12 +129,17 @@ void ofApp::update()
             saveDetectionImage();
 
 #ifdef ENABLE_WRITER
-            m_cmd_writer.setPath();
+            m_cmd_image_writer.setPath();
 #endif
 
 #ifdef ENABLE_RECORDING
-            m_cmd_recording.startThread();
-            m_cmd_recording.start();
+            if (m_config.parameters.recordmode) {
+                m_video_writer.startThread();
+                m_video_writer.start();
+            } else {
+                m_cmd_recording.startThread();
+                m_cmd_recording.start();
+            }
             common::log("Recording...");
 #endif
 
@@ -149,13 +160,19 @@ void ofApp::update()
 
         if (m_timex_stoprecording.elapsed()) {
 #ifdef ENABLE_RECORDING
-            m_cmd_recording.stop();
-            m_cmd_recording.stopThread();
+            if (m_config.parameters.recordmode) {
+                m_video_writer.stop();
+                m_video_writer.close();
+                m_video_writer.stopThread();
+            } else {
+                m_cmd_recording.stop();
+                m_cmd_recording.stopThread();
+            }
             common::log("Recording finish.");
 #endif
 
 #ifdef ENABLE_WRITER
-            m_cmd_writer.start();
+            m_cmd_image_writer.start();
             common::log("Detector started.");
 #endif
 
@@ -252,14 +269,15 @@ string& ofApp::getStatusInfo()
     // clang-format off
 
     char buf[512];
-    sprintf(buf,"%s %dx%d FPS/Frame: %2.2d/%2.2d / %d Q:%.3d [ %3d, %3d, %3d, %3d ] Video:%2d",
+    sprintf(buf,"%s %dx%d FPS/Frame: %2.2d/%2.2d / %d rm:%d Q:%.3d [ %3d, %3d, %3d, %3d ] Video:%2d",
                 m_cam.getCodeName().c_str(),
                 (int)m_cam.getSize().width,
                 (int)m_cam.getSize().height,
                 (int)m_cam.getFPS(),
                 (int) ofGetFrameRate(),
                 m_framecount,
-                0,//        (int)m_writer.get_queue().size(),
+                m_config.parameters.recordmode,
+                m_config.parameters.recordmode ? (int)m_video_writer.get_queue().size(): 0,
                 m_config.settings.minthreshold,
                 m_config.settings.minrectwidth,
                 m_config.settings.mincontoursize,
@@ -336,8 +354,10 @@ void ofApp::on_motion_detected(Rect& r)
     m_detected.scale(sx, sy);
 
 #ifdef ENABLE_WRITER
-    if (m_framecount % 30) {
-        m_cmd_writer.add(m_frame);
+    if (m_timex_add_probe.elapsed()) {
+        m_cmd_image_writer.add(m_frame);
+
+        m_timex_add_probe.set();
     }
 #endif
 }
