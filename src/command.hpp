@@ -79,27 +79,6 @@ class CommandRecording : public Command
 };
 
 //--------------------------------------------------------------
-class CommandDetector : public Command
-{
-    queue<Mat> m_queue;
-    string m_directory;
-    string m_destination_file;
-
-  public:
-    void setPath(string directory, string destination_file)
-    {
-        m_directory = directory;
-        m_destination_file = destination_file;
-    }
-
-    void start() override
-    {
-        m_command = "./objdetector " + m_directory + " " + m_destination_file;
-        common::exec(m_command.c_str());
-    }
-};
-
-//--------------------------------------------------------------
 class CommandWriter : public ofThread
 {
     queue<Mat> m_queue;
@@ -110,8 +89,6 @@ class CommandWriter : public ofThread
     string m_directory;
 
     Config& m_config = m_config.getInstance();
-
-    CommandDetector m_cmd_detector;
 
   public:
     CommandWriter() {}
@@ -175,18 +152,5 @@ class CommandWriter : public ofThread
             ofSleepMillis(10);
         }
     }
-
-    // void start() override
-    //{
-    // if (m_processing) return;
-
-    // string source_filename = get_filepath("motion_" + m_config.parameters.camname, ".jpg", 1);
-    // string destination_filename =
-    // get_filepath("PERSON_" + m_config.parameters.camname, ".jpg", 1);
-
-    // m_command = "bash start-detector.sh " + source_filename + " " + destination_filename;
-
-    // m_processing = true;
-    //}
 };
 
