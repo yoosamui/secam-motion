@@ -106,9 +106,7 @@ class CommandWriter : public ofThread
 
     void add(const Mat& frame)
     {
-        if (m_processing) return;
-
-        if (m_queue.size() >= 12 || frame.empty()) {
+        if (m_processing || m_queue.size() >= 20 || frame.empty()) {
             return;
         }
 
