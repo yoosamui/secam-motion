@@ -20,6 +20,7 @@ The camera settings are very importand to consider if you want best result you w
 configure the camera settings with specific parameters.
 
 ...
+continue
 
 
 
