@@ -60,8 +60,8 @@ class Motion : public IMotion
 
     explicit Motion()
     {
-        // Valid detection after 5 frames.
-        int frames = 1000 / m_config.parameters.fps * 5;
+        // checks detection after 5 secs.
+        int frames = (1000 / m_config.parameters.fps) * 5;
 
         // Set timmers limit values
         //
