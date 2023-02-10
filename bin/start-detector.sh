@@ -1,6 +1,4 @@
 #!/bin/bash
-./objdetector $1 $2
-rm -fdr $1
-
-
+./objdetector -c=0.5 -d=$1 -t=$2
+#rm -fdr $1
 
