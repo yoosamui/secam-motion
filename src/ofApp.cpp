@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-#define VERSION "0.5"
+#define VERSION "0.59"
 
 #define ENABLE_RECORDING
 #define ENABLE_WRITER
@@ -49,10 +49,10 @@ void ofApp::setup()
 
     m_motion.init();
 
-    m_timex_stoprecording.setLimit(c_videoduration * 1000);
+    m_timex_stoprecording.setLimit(m_config.parameters.videoduration * 1000);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
-    m_timex_add_probe.setLimit(2000);
+    m_timex_add_probe.setLimit(1000);
 
 #ifdef ENABLE_WRITER
     m_cmd_image_writer.startThread();
@@ -148,7 +148,7 @@ void ofApp::update()
             ofResetElapsedTimeCounter();
         }
 
-        m_recording_duration = c_videoduration;
+        m_recording_duration = m_config.parameters.videoduration;
         m_timex_stoprecording.reset();
 
         m_motion_detected = false;
@@ -178,7 +178,7 @@ void ofApp::update()
             common::log("Detector started.");
 #endif
 
-            m_recording_duration = c_videoduration;
+            m_recording_duration = m_config.parameters.videoduration;
             m_recording = false;
 
             m_timex_stoprecording.set();
