@@ -52,7 +52,7 @@ void ofApp::setup()
     m_timex_stoprecording.setLimit(m_config.parameters.videoduration * 1000);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
-    m_timex_add_probe.setLimit(1000);
+    m_timex_add_probe.setLimit(2000);
 
 #ifdef ENABLE_WRITER
     m_cmd_image_writer.startThread();
@@ -155,6 +155,14 @@ void ofApp::update()
     }
 
     if (m_recording) {
+#ifdef ENABLE_WRITER
+        if (m_timex_add_probe.elapsed()) {
+            m_cmd_image_writer.add(m_frame);
+
+            m_timex_add_probe.set();
+        }
+#endif
+
         if (m_timex_second.elapsed()) {
             m_recording_duration--;
             m_timex_second.set();
@@ -354,14 +362,6 @@ void ofApp::on_motion_detected(Rect& r)
     float sy = static_cast<float>(m_frame.rows * 100 / m_motion.getHeight()) / 100;
 
     m_detected.scale(sx, sy);
-
-#ifdef ENABLE_WRITER
-    if (m_timex_add_probe.elapsed()) {
-        m_cmd_image_writer.add(m_frame);
-
-        m_timex_add_probe.set();
-    }
-#endif
 }
 
 //--------------------------------------------------------------
