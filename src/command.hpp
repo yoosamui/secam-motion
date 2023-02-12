@@ -74,7 +74,6 @@ class CommandRecording : public Command
     {
         m_command = "bash stop-recorder.sh";
         common::exec(m_command.c_str());
-        common::log("Kill command executed ");
     }
 };
 
@@ -137,7 +136,9 @@ class CommandWriter : public ofThread
                     Mat image = m_queue.front();
                     m_queue.pop();
 
-                    string filename = m_directory + "/image" + to_string(++count) + ".jpg";
+                    char buff[512];
+                    sprintf(buff, "%s/image%.2d.jpg", m_directory.c_str(), ++count);
+                    string filename(buff);
                     imwrite(filename, image);
                     cout << filename << endl;
                 }
