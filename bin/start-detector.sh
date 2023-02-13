@@ -1,6 +1,11 @@
 #!/bin/bash
-./objdetector $1 $2
-rm -fdr $1
 
+result=`./objdetector -c=0.53 -d=$1 -t=$2`
+
+# if [ "$result" == "1" ]; then
+# do something...	
+# fi
+
+echo $result
 
 

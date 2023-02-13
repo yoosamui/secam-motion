@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-#define VERSION "0.5"
+#define VERSION "0.59"
 
 #define ENABLE_RECORDING
 #define ENABLE_WRITER
@@ -49,10 +49,10 @@ void ofApp::setup()
 
     m_motion.init();
 
-    m_timex_stoprecording.setLimit(c_videoduration * 1000);
+    m_timex_stoprecording.setLimit(m_config.parameters.videoduration * 1000);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
-    m_timex_add_probe.setLimit(2000);
+    m_timex_add_probe.setLimit(1000);
 
 #ifdef ENABLE_WRITER
     m_cmd_image_writer.startThread();
@@ -139,6 +139,7 @@ void ofApp::update()
                 m_video_writer.startThread();
                 m_video_writer.start();
             } else {
+                m_cmd_recording.stop();
                 m_cmd_recording.startThread();
                 m_cmd_recording.start();
             }
@@ -148,13 +149,21 @@ void ofApp::update()
             ofResetElapsedTimeCounter();
         }
 
-        m_recording_duration = c_videoduration;
+        m_recording_duration = m_config.parameters.videoduration;
         m_timex_stoprecording.reset();
 
         m_motion_detected = false;
     }
 
     if (m_recording) {
+#ifdef ENABLE_WRITER
+        if (m_timex_add_probe.elapsed()) {
+            m_cmd_image_writer.add(m_frame);
+
+            m_timex_add_probe.set();
+        }
+#endif
+
         if (m_timex_second.elapsed()) {
             m_recording_duration--;
             m_timex_second.set();
@@ -174,11 +183,11 @@ void ofApp::update()
 #endif
 
 #ifdef ENABLE_WRITER
-            m_cmd_image_writer.start();
-            common::log("Detector started.");
+            m_cmd_image_writer.stop();
+            common::log("Detector close and finish.");
 #endif
 
-            m_recording_duration = c_videoduration;
+            m_recording_duration = m_config.parameters.videoduration;
             m_recording = false;
 
             m_timex_stoprecording.set();
@@ -354,14 +363,6 @@ void ofApp::on_motion_detected(Rect& r)
     float sy = static_cast<float>(m_frame.rows * 100 / m_motion.getHeight()) / 100;
 
     m_detected.scale(sx, sy);
-
-#ifdef ENABLE_WRITER
-    if (m_timex_add_probe.elapsed()) {
-        m_cmd_image_writer.add(m_frame);
-
-        m_timex_add_probe.set();
-    }
-#endif
 }
 
 //--------------------------------------------------------------

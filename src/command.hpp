@@ -74,7 +74,6 @@ class CommandRecording : public Command
     {
         m_command = "bash stop-recorder.sh";
         common::exec(m_command.c_str());
-        common::log("Kill command executed ");
     }
 };
 
@@ -84,6 +83,8 @@ class CommandWriter : public ofThread
     queue<Mat> m_queue;
 
     bool m_processing = false;
+    int m_count = 0;
+    bool m_found = false;
 
     string m_filename;
     string m_directory;
@@ -102,11 +103,13 @@ class CommandWriter : public ofThread
                       common::getTimestamp(m_config.settings.timezone, "%T");
 
         boost::filesystem::create_directory(m_directory);
+        m_found = false;
+        m_count = 0;
     }
 
     void add(const Mat& frame)
     {
-        if (m_processing || m_queue.size() >= 20 || frame.empty()) {
+        if (m_found || m_processing || m_queue.size() >= 32 || frame.empty()) {
             return;
         }
 
@@ -115,36 +118,39 @@ class CommandWriter : public ofThread
         common::bgr2rgb(rgb);
 
         m_queue.push(rgb);
-        common::log("add probe.");
+        m_processing = true;
     }
 
-    void start()
+    void stop()
     {
-        if (m_processing) return;
-
-        m_processing = true;
+        m_processing = false;
+        string command = "bash stop-detector.sh " + m_directory;
+        common::log(command);
+        common::exec(command.c_str());
     }
 
     void threadedFunction()
     {
         while (isThreadRunning()) {
             while (m_processing) {
-                int count = 0;
-                if (!m_queue.empty()) {
-                    common::log("Create images...");
-                }
                 while (m_queue.size()) {
                     Mat image = m_queue.front();
                     m_queue.pop();
 
-                    string filename = m_directory + "/image" + to_string(++count) + ".jpg";
+                    char buff[512];
+                    sprintf(buff, "%s/image%.2d.jpg", m_directory.c_str(), ++m_count);
+                    string filename(buff);
                     imwrite(filename, image);
-                    cout << filename << endl;
+                    common::log("add probe." + to_string(m_count));
                 }
 
                 string command = "bash start-detector.sh " + m_directory + " " + m_filename;
-                common::exec(command.c_str());
-                cout << "Detection finish." << endl;
+                common::log(command);
+                auto result = common::exec(command.c_str());
+
+                common::log("Detection finish. " + result);
+
+                m_found = result == "1";
                 m_processing = false;
             }
             ofSleepMillis(10);

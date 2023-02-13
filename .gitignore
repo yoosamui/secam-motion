@@ -19,6 +19,7 @@ obj/
 *.cfg
 *.xml
 bin/secam-motion
+bin/objdetector
 bin/data/
 *.log
 server

@@ -17,6 +17,7 @@ static const string keys =
     "{ rec  r   | 1     | Use the internal video = 0, 1 = external recording.}"
     "{ dec  d   | 1     | Use the object detector.}"
     "{ fps  f   | 30    | frame rate.}"
+    "{ video v  | 30    | minimal video duration in sec.}"
     "{ width w  | 640   | view width. }"
     "{ height h | 360   | view height. }";
 
@@ -41,6 +42,7 @@ int main(int argc, char* argv[])
     auto mode = parser.get<int>("mode");
     auto fps = parser.get<int>("fps");
     auto recordmode = parser.get<int>("rec");
+    auto videoduration = parser.get<int>("video");
 
     if (fps < 5 || fps > 60) {
         cout << "invalid fps values." << endl;
@@ -88,6 +90,7 @@ int main(int argc, char* argv[])
     m_config.parameters.mode = mode;
     m_config.parameters.fps = fps;
     m_config.parameters.recordmode = recordmode;
+    m_config.parameters.videoduration = videoduration;
 
     auto app = std::make_shared<ofApp>();
     ofRunApp(app);
