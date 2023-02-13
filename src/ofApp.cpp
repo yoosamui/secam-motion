@@ -139,6 +139,7 @@ void ofApp::update()
                 m_video_writer.startThread();
                 m_video_writer.start();
             } else {
+                m_cmd_recording.stop();
                 m_cmd_recording.startThread();
                 m_cmd_recording.start();
             }
@@ -182,8 +183,8 @@ void ofApp::update()
 #endif
 
 #ifdef ENABLE_WRITER
-            //   m_cmd_image_writer.start();
-            //   common::log("Detector started.");
+            m_cmd_image_writer.stop();
+            common::log("Detector close and finish.");
 #endif
 
             m_recording_duration = m_config.parameters.videoduration;
