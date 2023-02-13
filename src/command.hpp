@@ -121,11 +121,12 @@ class CommandWriter : public ofThread
         m_processing = true;
     }
 
-    void start()
+    void stop()
     {
-        if (m_processing) return;
-
-        m_processing = true;
+        m_processing = false;
+        string command = "bash stop-detector.sh " + m_directory;
+        common::log(command);
+        common::exec(command.c_str());
     }
 
     void threadedFunction()
@@ -144,7 +145,9 @@ class CommandWriter : public ofThread
                 }
 
                 string command = "bash start-detector.sh " + m_directory + " " + m_filename;
+                common::log(command);
                 auto result = common::exec(command.c_str());
+
                 common::log("Detection finish. " + result);
 
                 m_found = result == "1";
