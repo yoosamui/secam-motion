@@ -24,11 +24,12 @@ class ofApp : public ofBaseApp
 {
   private:
     enum input_mode_t { none, mask, motion };
+    Config& m_config = m_config.getInstance();
     // thread* m_thread;
     int m_width = 640;
     int m_height = 360;
     int m_detections_count = 0;
-    int m_recording_duration = c_videoduration;
+    int m_recording_duration = m_config.parameters.videoduration;
     int m_mask_linex = 0;
     int m_mask_liney = 0;
     int m_mouseX = 0;
@@ -53,7 +54,6 @@ class ofApp : public ofBaseApp
     Mat m_frame;
     Mat m_resized;
 
-    Config& m_config = m_config.getInstance();
     ofTrueTypeFont m_font;
     input_mode_t m_input_mode = input_mode_t::none;
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-kill $(pidof ffmpeg)
+pkill ffmpeg
 
 
 

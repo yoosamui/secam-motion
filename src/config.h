@@ -15,6 +15,7 @@ class Config
         int mode;
         int fps;
         int recordmode;
+        int videoduration;
     };
 
   private:
