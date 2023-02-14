@@ -125,7 +125,7 @@ class CommandWriter : public ofThread
     {
         m_processing = false;
         string command = "bash stop-detector.sh " + m_directory;
-        common::log(command);
+        common::log(command + "---------------------------------------------------");
         common::exec(command.c_str());
     }
 
