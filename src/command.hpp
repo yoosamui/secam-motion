@@ -109,7 +109,7 @@ class CommandWriter : public ofThread
 
     void add(const Mat& frame)
     {
-        if (m_found || m_processing || frame.empty() || m_count > 30) {
+        if (m_found || m_processing || frame.empty() || m_count > 100) {
             return;
         }
 
