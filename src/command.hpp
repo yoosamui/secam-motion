@@ -109,7 +109,7 @@ class CommandWriter : public ofThread
 
     void add(const Mat& frame)
     {
-        if (m_found || m_processing || m_queue.size() >= 32 || frame.empty()) {
+        if (m_found || m_processing || frame.empty() || m_count > 30) {
             return;
         }
 
@@ -125,7 +125,7 @@ class CommandWriter : public ofThread
     {
         m_processing = false;
         string command = "bash stop-detector.sh " + m_directory;
-        common::log(command + "---------------------------------------------------");
+        common::log(command);
         common::exec(command.c_str());
     }
 
@@ -141,7 +141,7 @@ class CommandWriter : public ofThread
                     sprintf(buff, "%s/image%.2d.jpg", m_directory.c_str(), ++m_count);
                     string filename(buff);
                     imwrite(filename, image);
-                    common::log("add probe." + to_string(m_count));
+                    common::log("add probe:" + to_string(m_count));
                 }
 
                 string command = "bash start-detector.sh " + m_directory + " " + m_filename;
