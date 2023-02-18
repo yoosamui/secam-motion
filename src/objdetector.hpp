@@ -106,31 +106,35 @@ class Objectdetector : public ofThread
     {
         vector<Detection> output;
         while (isThreadRunning()) {
-            while (!m_queue.empty() /* && m_processing */) {
-                common::log("Start detection... ");
+            while (!m_queue.empty()  && m_processing ) {
+                common::log("Start detection: " + to_string(m_queue.size() ));
 
                 output.clear();
                 Mat frame = m_queue.front();
-                m_detected = detect(frame.clone(), output);
-
                 m_queue.pop();
+
+                m_detected = detect(frame, output);
+
 
                 if (m_detected) {
                     while (!m_queue.empty()) {
                         m_queue.pop();
                     }
 
-                    common::log("!!!Person detected!!!");
                     break;
                 }
             }
+
 
             if (m_detected) {
                 int value = 0;
                 ofNotifyEvent(on_finish_detections, value, this);
                 m_detected = false;
+                common::log("!!!Person detected!!!");
+
             }
 
+            m_processing = false;
             ofSleepMillis(10);
         }
     }
@@ -295,16 +299,19 @@ class Objectdetector : public ofThread
     void setPath()
     {
         m_filename = common::get_filepath("PERSON_" + m_config.parameters.camname, ".jpg", 1);
-        m_count = 0;
+        m_count = 10;
     }
 
     void add(const Mat &img)
     {
-        if (m_count++ >= 4 || ++m_frame_number % 3 || img.empty()) {
+        if (img.empty() ) {
             return;
         }
 
-        common::log("Add probe.");
+
+        if(m_count++ > 20) return;
+
+
 
         Mat frame;
         img.copyTo(frame);
@@ -312,7 +319,11 @@ class Objectdetector : public ofThread
 
         m_queue.push(frame);
 
-        // string filename = m_writer.get_filepath("probe", ".jpg", 1);
-        // imwrite(filename, frame);
+        common::log("Add probe. " + to_string(m_count));
+
+        //string filename = common::get_filepath("probe", ".jpg", 1);
+        //imwrite(filename, frame);
+
+        m_processing = true;
     }
 };
