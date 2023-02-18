@@ -9,6 +9,7 @@
 #include "config.h"
 #include "constants.h"
 #include "motion.hpp"
+#include "objdetector.hpp"
 #include "ofMain.h"
 #include "ofxCv.h"
 #include "ofxOpenCv.h"
@@ -41,6 +42,7 @@ class ofApp : public ofBaseApp
 
     bool m_recording = false;
     bool m_motion_detected = false;
+    bool m_add_detection_probe = false;
     bool m_processing = false;
     bool m_show_mask_line = true;
 
@@ -66,6 +68,7 @@ class ofApp : public ofBaseApp
     CommandRecording m_cmd_recording;
     CommandWriter m_cmd_image_writer;
     Videowriter m_video_writer;
+    Objectdetector m_objdetector;
 
     common::Timex m_timex_stoprecording;
     common::Timex m_timex_second;
