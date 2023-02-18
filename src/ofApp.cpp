@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-#define VERSION "0.62"
+#define VERSION "0.63"
 
 #define ENABLE_RECORDING
 //#define ENABLE_WRITER
@@ -59,7 +59,7 @@ void ofApp::setup()
 #ifdef ENABLE_WRITER
     m_cmd_image_writer.startThread();
 #endif
-m_objdetector.startThread();
+    m_objdetector.startThread();
     m_processing = true;
 }
 
@@ -133,7 +133,6 @@ void ofApp::update()
             saveDetectionImage();
 
             m_objdetector.setPath();
-          //  m_objdetector.startThread();
             m_objdetector.add(m_frame);
             m_add_detection_probe = true;
 
@@ -192,7 +191,7 @@ void ofApp::update()
                 m_cmd_recording.stop();
                 m_cmd_recording.stopThread();
             }
-          //  m_objdetector.stopThread();
+            //  m_objdetector.stopThread();
             m_add_detection_probe = false;
             common::log("Recording finish.");
 #endif
