@@ -1,9 +1,9 @@
 #include "ofApp.h"
 
-#define VERSION "0.61"
+#define VERSION "0.62"
 
 #define ENABLE_RECORDING
-#define ENABLE_WRITER
+//#define ENABLE_WRITER
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -47,12 +47,14 @@ void ofApp::setup()
     ofAddListener(m_motion.on_motion_detected, this, &ofApp::on_motion_detected);
     ofAddListener(m_motion.on_mask_updated, this, &ofApp::on_mask_updated);
 
+    ofAddListener(m_objdetector.on_finish_detections, this, &ofApp::on_finish_detections);
+
     m_motion.init();
 
     m_timex_stoprecording.setLimit(m_config.parameters.videoduration * 1000);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
-    m_timex_add_probe.setLimit(1000);
+    m_timex_add_probe.setLimit(500);
 
 #ifdef ENABLE_WRITER
     m_cmd_image_writer.startThread();
@@ -130,6 +132,10 @@ void ofApp::update()
             // save the detection image
             saveDetectionImage();
 
+            m_objdetector.setPath();
+            m_objdetector.startThread();
+            m_add_detection_probe = true;
+
 #ifdef ENABLE_WRITER
             m_cmd_image_writer.setPath();
 #endif
@@ -156,11 +162,17 @@ void ofApp::update()
     }
 
     if (m_recording) {
+        if (m_timex_add_probe.elapsed()) {
+            if (m_add_detection_probe) {
+                m_objdetector.add(m_frame);
+            }
+
+            m_timex_add_probe.set();
+        }
+
 #ifdef ENABLE_WRITER
         if (m_timex_add_probe.elapsed()) {
             m_cmd_image_writer.add(m_frame);
-
-            m_timex_add_probe.set();
         }
 #endif
 
@@ -179,6 +191,8 @@ void ofApp::update()
                 m_cmd_recording.stop();
                 m_cmd_recording.stopThread();
             }
+            m_objdetector.stopThread();
+            m_add_detection_probe = false;
             common::log("Recording finish.");
 #endif
 
@@ -368,8 +382,9 @@ void ofApp::on_motion_detected(Rect& r)
 //--------------------------------------------------------------
 void ofApp::on_finish_detections(int& count)
 {
-    m_processing = true;
-    common::log("Finish detections :" + to_string(count));
+    // m_processing = true;
+    common::log(".................Finish detections :" + to_string(count));
+    m_add_detection_probe = false;
 }
 
 //--------------------------------------------------------------
