@@ -54,12 +54,12 @@ void ofApp::setup()
     m_timex_stoprecording.setLimit(m_config.parameters.videoduration * 1000);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
-    m_timex_add_probe.setLimit(500);
+    m_timex_add_probe.setLimit(2000);
 
 #ifdef ENABLE_WRITER
     m_cmd_image_writer.startThread();
 #endif
-
+m_objdetector.startThread();
     m_processing = true;
 }
 
@@ -133,7 +133,8 @@ void ofApp::update()
             saveDetectionImage();
 
             m_objdetector.setPath();
-            m_objdetector.startThread();
+          //  m_objdetector.startThread();
+            m_objdetector.add(m_frame);
             m_add_detection_probe = true;
 
 #ifdef ENABLE_WRITER
@@ -191,7 +192,7 @@ void ofApp::update()
                 m_cmd_recording.stop();
                 m_cmd_recording.stopThread();
             }
-            m_objdetector.stopThread();
+          //  m_objdetector.stopThread();
             m_add_detection_probe = false;
             common::log("Recording finish.");
 #endif
@@ -383,7 +384,7 @@ void ofApp::on_motion_detected(Rect& r)
 void ofApp::on_finish_detections(int& count)
 {
     // m_processing = true;
-    common::log(".................Finish detections :" + to_string(count));
+    common::log("Finish detections");
     m_add_detection_probe = false;
 }
 
