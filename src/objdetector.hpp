@@ -26,7 +26,7 @@ class Objectdetector : public ofThread
     const float INPUT_HEIGHT = 640.0;
     const float SCORE_THRESHOLD = 0.2;
     const float NMS_THRESHOLD = 0.4;
-    const float CONFIDENCE_THRESHOLD = 0.5;
+    const float CONFIDENCE_THRESHOLD = 0.53;
 
     const string m_title = "PERSON_";
 
@@ -106,15 +106,14 @@ class Objectdetector : public ofThread
     {
         vector<Detection> output;
         while (isThreadRunning()) {
-            while (!m_queue.empty()  && m_processing ) {
-                common::log("Start detection: " + to_string(m_queue.size() ));
+            while (!m_queue.empty() && m_processing) {
+                common::log("Start detection: " + to_string(m_queue.size()));
 
                 output.clear();
                 Mat frame = m_queue.front();
                 m_queue.pop();
 
                 m_detected = detect(frame, output);
-
 
                 if (m_detected) {
                     while (!m_queue.empty()) {
@@ -125,13 +124,11 @@ class Objectdetector : public ofThread
                 }
             }
 
-
             if (m_detected) {
                 int value = 0;
                 ofNotifyEvent(on_finish_detections, value, this);
                 m_detected = false;
                 common::log("!!!Person detected!!!");
-
             }
 
             m_processing = false;
@@ -222,6 +219,7 @@ class Objectdetector : public ofThread
 
         for (int c = 0; c < detections; ++c) {
             auto detection = output[c];
+            float confidence = detection.confidence;
 
             auto box = detection.box;
             auto classId = detection.class_id;
@@ -239,7 +237,8 @@ class Objectdetector : public ofThread
 
             float fscale = 0.4;
             int thickness = 1;
-            string title = m_classes[classId];
+            //            string title = m_classes[classId];
+            string title = m_classes[classId] + " " + to_string(confidence);
 
             putText(input, title, Point(r.x + 2, r.y - 5), cv::FONT_HERSHEY_SIMPLEX, fscale,
                     Scalar(0, 0, 0), thickness, LINE_AA, false);
@@ -304,14 +303,11 @@ class Objectdetector : public ofThread
 
     void add(const Mat &img)
     {
-        if (img.empty() ) {
+        if (img.empty()) {
             return;
         }
 
-
-        if(m_count++ > 20) return;
-
-
+        if (m_count++ > 20) return;
 
         Mat frame;
         img.copyTo(frame);
@@ -321,8 +317,8 @@ class Objectdetector : public ofThread
 
         common::log("Add probe. " + to_string(m_count));
 
-        //string filename = common::get_filepath("probe", ".jpg", 1);
-        //imwrite(filename, frame);
+        // string filename = common::get_filepath("probe", ".jpg", 1);
+        // imwrite(filename, frame);
 
         m_processing = true;
     }
