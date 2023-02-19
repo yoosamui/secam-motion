@@ -106,6 +106,9 @@ class Motion : public IMotion
         int h = 0;
         m_contour_finder.findContours(m_output);
 
+        // int n = m_contour_finder.getBoundingRects().size();
+        // if (n > 4) cout << " ............ " << to_string(n) << endl;
+
         for (auto& r : m_contour_finder.getBoundingRects()) {
             if ((r.width > m_config.settings.maxrectwidth ||
                  r.height > m_config.settings.maxrectwidth)) {

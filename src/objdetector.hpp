@@ -1,5 +1,23 @@
 #pragma once
-
+//  gcc main.cpp `pkg-config opencv4 --libs --cflags` -o main -lstdc++ -pthread
+//  g++ -O3 main.cpp -o main `pkg-config --cflags --libs opencv4` +++
+//
+//  Thanks and all credits to:
+//  Luiz doleron
+//  https://medium.com/mlearning-ai/detecting-objects-with-yolov5-opencv-python-and-c-c7cf13d1483c
+//
+//  https://morioh.com/p/a7dae7ba49d2
+//
+//  git clone https://github.com/ultralytics/yolov5  # clone
+//  cd yolov5
+//  pip install -r requirements.txt  # install
+//
+//  I get this code from here:
+//  https://github.com/doleron/yolov5-opencv-cpp-python/blob/main/cpp/yolo.cpp
+//  https://github.com/nandinib1999/object-detection-yolo-opencv
+//
+//  https://ultralytics.com/yolov5
+//
 #include <opencv2/dnn.hpp>
 #include <queue>
 
@@ -219,15 +237,15 @@ class Objectdetector : public ofThread
 
         for (int c = 0; c < detections; ++c) {
             auto detection = output[c];
-            float confidence = detection.confidence;
-
-            auto box = detection.box;
             auto classId = detection.class_id;
-            auto color = get_color(m_classes[classId]);
 
             if (m_classes[classId] != "person") continue;
 
             found = true;
+
+            float confidence = detection.confidence;
+            auto box = detection.box;
+            auto color = get_color(m_classes[classId]);
 
             Rect r = inflate(box, 20, input);
 
