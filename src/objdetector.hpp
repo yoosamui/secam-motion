@@ -307,7 +307,7 @@ class Objectdetector : public ofThread
             return;
         }
 
-        if (m_count++ > 20) return;
+        if (m_count++ > 50) return;
 
         Mat frame;
         img.copyTo(frame);
