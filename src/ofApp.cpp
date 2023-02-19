@@ -97,7 +97,7 @@ void ofApp::update()
     // Processing
     common::bgr2rgb(m_frame);
 
-    // Write the timestam
+    // Write the timestamp
     auto timestamp = common::getTimestampMillis("Asia/Bangkok", "%Y.%m.%d %T");
     int fontface = cv::FONT_HERSHEY_SIMPLEX;
     double scale = 0.8;
