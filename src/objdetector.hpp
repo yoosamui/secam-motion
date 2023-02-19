@@ -219,15 +219,15 @@ class Objectdetector : public ofThread
 
         for (int c = 0; c < detections; ++c) {
             auto detection = output[c];
-            float confidence = detection.confidence;
-
-            auto box = detection.box;
             auto classId = detection.class_id;
-            auto color = get_color(m_classes[classId]);
 
             if (m_classes[classId] != "person") continue;
 
             found = true;
+
+            float confidence = detection.confidence;
+            auto box = detection.box;
+            auto color = get_color(m_classes[classId]);
 
             Rect r = inflate(box, 20, input);
 
