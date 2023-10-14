@@ -316,7 +316,7 @@ class Objectdetector : public ofThread
     void setPath()
     {
         m_filename = common::get_filepath("PERSON_" + m_config.parameters.camname, ".jpg", 1);
-        m_count = 10;
+        m_count = 0;
     }
 
     void add(const Mat &img)
