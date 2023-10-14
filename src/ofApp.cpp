@@ -47,7 +47,7 @@ void ofApp::setup()
     ofAddListener(m_motion.on_motion_detected, this, &ofApp::on_motion_detected);
     ofAddListener(m_motion.on_mask_updated, this, &ofApp::on_mask_updated);
 
-    ofAddListener(m_objdetector.on_finish_detections, this, &ofApp::on_finish_detections);
+    //    ofAddListener(m_objdetector.on_finish_detections, this, &ofApp::on_finish_detections);
 
     m_motion.init();
 
@@ -59,7 +59,7 @@ void ofApp::setup()
 #ifdef ENABLE_WRITER
     m_cmd_image_writer.startThread();
 #endif
-    m_objdetector.startThread();
+    //   m_objdetector.startThread();
     m_processing = true;
 }
 
@@ -132,8 +132,8 @@ void ofApp::update()
             // save the detection image
             saveDetectionImage();
 
-            m_objdetector.setPath();
-            m_objdetector.add(m_frame);
+            //    m_objdetector.setPath();
+            //   m_objdetector.add(m_frame);
             m_add_detection_probe = true;
 
 #ifdef ENABLE_WRITER
@@ -164,7 +164,7 @@ void ofApp::update()
     if (m_recording) {
         if (m_timex_add_probe.elapsed()) {
             if (m_add_detection_probe) {
-                m_objdetector.add(m_frame);
+                //          m_objdetector.add(m_frame);
             }
 
             m_timex_add_probe.set();

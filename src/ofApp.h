@@ -68,7 +68,7 @@ class ofApp : public ofBaseApp
     CommandRecording m_cmd_recording;
     CommandWriter m_cmd_image_writer;
     Videowriter m_video_writer;
-    Objectdetector m_objdetector;
+    //  Objectdetector m_objdetector;
 
     common::Timex m_timex_stoprecording;
     common::Timex m_timex_second;
