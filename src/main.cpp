@@ -8,8 +8,6 @@
 #include "ofAppNoWindow.h"
 #include "ofMain.h"
 
-namespace bfs = boost::filesystem;
-
 static const string keys =
     "{ help help|       | print help message. }"
     "{ camera c |       | load the camera config.cfg file and starts streaming. }"
@@ -19,8 +17,13 @@ static const string keys =
     "{ fps  f   | 30    | frame rate.}"
     "{ video v  | 30    | minimal video duration in sec.}"
     "{ width w  | 640   | view width. }"
+    "{ process p  | 1   | 1= process  }"
     "{ height h | 360   | view height. }";
 
+namespace bfs = boost::filesystem;
+/**
+* Test comment
+*/
 int main(int argc, char* argv[])
 {
     cv::CommandLineParser parser(argc, argv, keys);
@@ -43,6 +46,7 @@ int main(int argc, char* argv[])
     auto fps = parser.get<int>("fps");
     auto recordmode = parser.get<int>("rec");
     auto videoduration = parser.get<int>("video");
+    auto process = parser.get<int>("process");
 
     if (fps < 5 || fps > 60) {
         cout << "invalid fps values." << endl;
@@ -91,6 +95,7 @@ int main(int argc, char* argv[])
     m_config.parameters.fps = fps;
     m_config.parameters.recordmode = recordmode;
     m_config.parameters.videoduration = videoduration;
+    m_config.parameters.process = process;
 
     auto app = std::make_shared<ofApp>();
     ofRunApp(app);
