@@ -44,7 +44,7 @@ class ofApp : public ofBaseApp
     bool m_motion_detected = false;
     bool m_add_detection_probe = false;
     bool m_processing = false;
-    bool m_show_mask_line = true;
+    bool m_show_mask_line = false;
 
     Rect m_max_rect;
 

@@ -61,8 +61,7 @@ void ofApp::setup()
 #endif
     //   m_objdetector.startThread();
 
-    m_processing = m_config.parameters.process == 1;
-   // cout << cout m_processing << endl;
+    m_processing = m_config.parameters.process == 0;
 }
 
 //--------------------------------------------------------------
@@ -122,7 +121,6 @@ void ofApp::update()
 
 
     if (!m_processing){
-        cout << "no processing" << endl;
         return;
     }
 
@@ -245,8 +243,9 @@ void ofApp::draw()
             return;
     };
 
-    // Draw yellow
     if (!m_processing) return;
+
+    // Draw yellow
 
 
     ofPushStyle();
