@@ -60,7 +60,9 @@ void ofApp::setup()
     m_cmd_image_writer.startThread();
 #endif
     //   m_objdetector.startThread();
-    m_processing = true;
+
+    m_processing = m_config.parameters.process == 1;
+   // cout << cout m_processing << endl;
 }
 
 //--------------------------------------------------------------
@@ -92,7 +94,7 @@ void ofApp::update()
     }
 
     if (m_framecount++ > 1000000) m_framecount = 0;
-    if (!m_processing) return;
+   // if (!m_processing) return;
 
     // Processing
     common::bgr2rgb(m_frame);
@@ -117,6 +119,12 @@ void ofApp::update()
         m_video_writer.add(m_frame);
     }
 #endif
+
+
+    if (!m_processing){
+        cout << "no processing" << endl;
+        return;
+    }
 
     m_found_motion.clear();
     m_detected.clear();
@@ -238,6 +246,9 @@ void ofApp::draw()
     };
 
     // Draw yellow
+    if (!m_processing) return;
+
+
     ofPushStyle();
     ofNoFill();
     ofSetLineWidth(1.0);
