@@ -33,6 +33,7 @@ void ofApp::setup()
        << "mincontousize =  " << m_config.settings.mincontoursize << "\n"
        << "detectionsmaxcount = " << m_config.settings.detectionsmaxcount << "\n"
        << "recordingmode = " << m_config.parameters.recordmode << "\n"
+       << "Processing= " << m_config.parameters.process << "\n"
        << "Version= " << VERSION << "\n"
        << endl;
 
