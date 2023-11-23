@@ -62,7 +62,7 @@ void ofApp::setup()
 #endif
     //   m_objdetector.startThread();
 
-    m_processing = m_config.parameters.process == 0;
+    m_processing = m_config.parameters.process == 1;
 }
 
 //--------------------------------------------------------------
