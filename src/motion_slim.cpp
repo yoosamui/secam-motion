@@ -68,7 +68,7 @@ void MotionSlim::update(const cv::Mat &frame)
 
         box = cv::boundingRect(contour);
         std::cout << "box: " << to_string(box.y) << std::endl;
-        if (box.y <= 5)
+        if (box.y <= 20)
         {
 
             //   found = false;
