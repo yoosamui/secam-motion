@@ -259,7 +259,7 @@ void ofApp::draw()
     case 0:
     case 1:
         drawMat(m_resized, 0, 0);
-        
+
         break;
     case 2:
         drawMat(m_motion.getGrayImage(), 0, 0);
@@ -286,7 +286,12 @@ void ofApp::draw()
             m_polyline.draw();
 
         // Draw the motion polyline
-        m_found_motion.draw();
+        //  m_found_motion.draw();
+
+        for (const auto &p : m_motion.m_detected_Polylines)
+        {
+            p.draw();
+        }
     }
 
     if (m_view == 2)
@@ -399,30 +404,47 @@ void ofApp::on_mask_updated()
 }
 
 //--------------------------------------------------------------
-void ofApp::on_motion(Rect &r)
+// void ofApp::on_motion(Rect &r)
+void ofApp::on_motion(std::vector<cv::Rect> &boxes)
 {
-    m_max_rect = r;
-    m_found_motion = m_found_motion.fromRectangle(toOf(r));
 
-    float sx = static_cast<float>(m_resized.cols * 100 / m_motion.getWidth()) / 100;
-    float sy = static_cast<float>(m_resized.rows * 100 / m_motion.getHeight()) / 100;
+    cout << "Motion detected: " << boxes.size() << " boxes" << endl;
+    for (const auto &r : boxes)
+    {
 
-    m_found_motion.scale(sx, sy);
+        m_max_rect = r;
+        m_found_motion = m_found_motion.fromRectangle(toOf(r));
+
+        //   cout << "rect: " << r.x << "," << r.y << "," << r.width << "," << r.height << endl;
+
+        float sx = static_cast<float>(m_resized.cols * 100 / m_motion.getWidth()) / 100;
+        float sy = static_cast<float>(m_resized.rows * 100 / m_motion.getHeight()) / 100;
+
+        m_found_motion.scale(sx, sy);
+
+        m_motion.m_detected_Polylines.push_back(m_found_motion);
+    }
 }
 
 //--------------------------------------------------------------
-void ofApp::on_motion_detected(Rect &r)
+// void ofApp::on_motion_detected(Rect &r)
+void ofApp::on_motion_detected(std::vector<cv::Rect> &boxes)
 {
     if (m_motion_detected)
         return;
 
     m_motion_detected = true;
-    m_detected = m_detected.fromRectangle(toOf(r));
 
-    float sx = static_cast<float>(m_frame.cols * 100 / m_motion.getWidth()) / 100;
-    float sy = static_cast<float>(m_frame.rows * 100 / m_motion.getHeight()) / 100;
+    // cout << "Motion detected: " << boxes.size() << " boxes" << endl;
+    for (const auto &r : boxes)
+    {
+        m_detected = m_detected.fromRectangle(toOf(r));
 
-    m_detected.scale(sx, sy);
+        float sx = static_cast<float>(m_frame.cols * 100 / m_motion.getWidth()) / 100;
+        float sy = static_cast<float>(m_frame.rows * 100 / m_motion.getHeight()) / 100;
+
+        m_detected.scale(sx, sy);
+    }
 }
 
 //--------------------------------------------------------------

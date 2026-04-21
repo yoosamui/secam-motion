@@ -4,6 +4,7 @@
 #include "config.h"
 #include "constants.h"
 #include "ofxOpenCv.h"
+#include <vector>
 
 class IMotionSlim
 {
@@ -58,9 +59,13 @@ class MotionSlim //: public IMotionSlim
     common::Timex m_timex_background;
 
 public:
-    ofEvent<Rect> on_motion;
-    ofEvent<Rect> on_motion_detected;
+    vector<ofPolyline> m_detected_Polylines;
+    // ofEvent<Rect> on_motion;
+    // ofEvent<Rect> on_motion_detected;
     ofEvent<void> on_mask_updated;
+
+    ofEvent<std::vector<cv::Rect>> on_motion;
+    ofEvent<std::vector<cv::Rect>> on_motion_detected;
 
 public:
     MotionSlim();
