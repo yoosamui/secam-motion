@@ -408,7 +408,7 @@ void ofApp::on_mask_updated()
 void ofApp::on_motion(std::vector<cv::Rect> &boxes)
 {
 
-    cout << "Motion detected: " << boxes.size() << " boxes" << endl;
+    // cout << "Motion detected: " << boxes.size() << " boxes" << endl;
     for (const auto &r : boxes)
     {
 
