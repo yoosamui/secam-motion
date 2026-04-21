@@ -52,6 +52,7 @@ void MotionSlim::update(const cv::Mat &frame)
     cv::findContours(thresh, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
     m_gray_image = currGray;
+    m_output = thresh;
     m_detected_Polylines.clear();
     // --- Step 7: Collect valid detections ---
     std::vector<cv::Rect> boxes;
@@ -204,47 +205,6 @@ void MotionSlim::update(const Mat &frame)
      // threshold shadows
      threshold(m_difference, m_output, c_threshold, 255, CV_THRESH_BINARY); */
 
-    /* nuevo */
-    cv::Mat prev, curr, diff, tresh;
-
-    convertColor(frame, prev, CV_RGB2GRAY);
-    convertColor(frame, curr, CV_RGB2GRAY);
-
-    resize(prev, prev, Size(c_width, c_height));
-    resize(curr, curr, Size(c_width, c_height));
-
-    prev.copyTo(prev); //, m_mask);
-    curr.copyTo(curr); //, m_mask);
-
-    cv::absdiff(prev, curr, diff);
-    cv::threshold(diff, tresh, 25, 255, cv::THRESH_BINARY);
-
-    cv::dilate(tresh, tresh, cv::Mat(), cv::Point(-1, -1), 2);
-
-    // cv::cvtColor(prev, curr, cv::COLOR_BGR2GRAY);
-
-    // frame.copyTo(curr, m_mask);
-    // cv::cvtColor(curr, curr, cv::COLOR_BGR2GRAY);
-
-    //  cv::absdiff(prev, curr, diff);
-    // cv::threshold(diff, tresh, 25, 255, cv::THRESH_BINARY);
-
-    // cv::dilate(tresh, tresh, cv::Mat(), cv::Point(-1, -1), 2);
-
-    if (tresh.empty())
-    {
-        cout << " ............ " << to_string(9999) << endl;
-        return;
-    }
-
-    std::vector<std::vector<cv::Point>> contours;
-    cv::findContours(tresh, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-
-    bool found = false;
-    int n = contours.size();
-    // cout << " ............ " << to_string(n) << endl;
-    cout << " ............ " << to_string(n) << endl;
-
     // detect();
 }
 #endif
@@ -285,55 +245,4 @@ void MotionSlim::detect()
 {
     m_found_motion.clear();
     m_detected.clear();
-
-    Rect max_rect(0, 0, 0, 0);
-    bool found = false;
-
-    int w = 0;
-    int h = 0;
-
-    //////////////////////////////////////////////////
-    /*     m_contour_finder.findContours(m_output);
-
-        // int n = m_contour_finder.getBoundingRects().size();
-        // if (n > 4) cout << " ............ " << to_string(n) << endl;
-
-        for (auto &r : m_contour_finder.getBoundingRects())
-        {
-            if ((r.width > m_config.settings.maxrectwidth ||
-                 r.height > m_config.settings.maxrectwidth))
-            {
-                found = false;
-                continue;
-            }
-
-            if ((r.width > w || r.height > h) && r.width > m_config.settings.minrectwidth &&
-                r.height > m_config.settings.minrectwidth)
-            {
-                max_rect = Rect(r);
-
-                w = r.width;
-                h = r.height;
-
-                found = true;
-            }
-        }
-
-        if (found)
-        {
-            m_detections_count++;
-            ofNotifyEvent(on_motion, max_rect, this);
-        }
-
-        if (m_timex_detections.elapsed())
-        {
-            if (found && m_detections_count >= m_config.settings.detectionsmaxcount &&
-                m_contour_finder.size() >= (size_t)m_config.settings.mincontoursize)
-            {
-                ofNotifyEvent(on_motion_detected, max_rect, this);
-            }
-
-            m_detections_count = 0;
-            m_timex_detections.set();
-        } */
 }
