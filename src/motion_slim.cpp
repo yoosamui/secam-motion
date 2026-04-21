@@ -39,7 +39,7 @@ void MotionSlim::update(const cv::Mat &frame)
 
     cv::threshold(diff, tresh, 25, 255, cv::THRESH_BINARY);
     cv::dilate(tresh, tresh, cv::Mat(), cv::Point(-1, -1), 2);
-   // blur(tresh, c_blur);
+    // blur(tresh, c_blur);
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(tresh, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
     m_gray_image = tresh;
@@ -56,10 +56,17 @@ void MotionSlim::update(const cv::Mat &frame)
     {
         // ignore small noise (important!)
         double area = cv::contourArea(contour);
-        if (area < 360)
+        if (area < 100)
             continue;
 
         box = cv::boundingRect(contour);
+        std::cout << "box: " << to_string(box.y) << std::endl;
+        if (box.y <= 5)
+        {
+
+            //   found = false;
+            continue;
+        }
 
         // cv::rectangle(output, box, cv::Scalar(0, 255, 0), 2);
         found = true;
@@ -77,7 +84,7 @@ void MotionSlim::update(const cv::Mat &frame)
 
         if (found && m_detections_count >= m_config.settings.detectionsmaxcount)
         {
-            std::cout << "-------------------------TIME: " << n << std::endl;
+            std::cout << "-TIME: on_motion_detected" << n << std::endl;
             ofNotifyEvent(on_motion_detected, box, this);
         }
 
