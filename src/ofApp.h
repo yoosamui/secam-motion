@@ -69,7 +69,7 @@ private:
   Ptr<cv::BackgroundSubtractorMOG2> mog2 = createBackgroundSubtractorMOG2();
   ContourFinder m_contour_finder;
   Camera m_cam;
-  Motion m_motion;
+  MotionSlim m_motion;
 
   CommandRecording m_cmd_recording;
   CommandWriter m_cmd_image_writer;
