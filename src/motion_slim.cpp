@@ -3,13 +3,13 @@
 MotionSlim::MotionSlim()
 {
     // checks detection after 5 secs.
-    int frames = (1000 / m_config.parameters.fps) * 50;
+    // int frames = (1000 / m_config.parameters.fps) * 50;
 
     // Set timmers limit values
     //
     // m_timex_background.setLimit(frames);
 
-    m_timex_detections.setLimit(3000);
+    m_timex_detections.setLimit(2000);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
 }
