@@ -16,6 +16,10 @@ public:
 /// @brief Motion detetion occurs here
 class MotionSlim //: public IMotionSlim
 {
+
+    cv::Mat prev_gray;
+    bool has_prev = false;
+
     const int c_width = 320;
     const int c_height = 240;
     int m_detections_count = 0;
@@ -67,4 +71,12 @@ public:
 
     void create_mask();
     void resetMask();
+
+    int getWidth() const { return c_width; }
+    int getHeight() const { return c_height; }
+
+    cv::Mat &getGrayImage() { return m_gray_image; }
+    cv::Mat &getOutputImage() { return m_output; }
+
+    const vector<Point> &getMaskPoints() const { return m_maskPoints; }
 };
