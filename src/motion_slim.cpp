@@ -9,7 +9,7 @@ MotionSlim::MotionSlim()
     //
     // m_timex_background.setLimit(frames);
 
-    m_timex_detections.setLimit(2000);
+    m_timex_detections.setLimit(1600);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
 }
@@ -25,8 +25,14 @@ void MotionSlim::update(const cv::Mat &frame)
 
     cv::cvtColor(frame, curr_gray, cv::COLOR_BGR2GRAY);
     cv::resize(curr_gray, curr_gray, cv::Size(c_width, c_height));
-    // curr_gray.copyTo(m_gray_image, m_mask);
-    curr_gray.copyTo(curr_gray, m_mask);
+   
+
+    /* cv::Mat masked;
+    curr_gray.copyTo(masked, m_mask);
+    curr_gray = masked; */
+   
+    // In-place masking (cleaner & faster)
+    curr_gray.setTo(0, ~m_mask);
 
     if (!has_prev)
     {
@@ -34,7 +40,8 @@ void MotionSlim::update(const cv::Mat &frame)
         has_prev = true;
         return;
     }
-
+    std::cout << "mask size: " << m_mask.size() << std::endl;
+    std::cout << "gray size: " << curr_gray.size() << std::endl;
     cv::absdiff(prev_gray, curr_gray, diff);
 
     cv::threshold(diff, tresh, 25, 255, cv::THRESH_BINARY);
@@ -42,7 +49,7 @@ void MotionSlim::update(const cv::Mat &frame)
     // blur(tresh, c_blur);
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(tresh, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-    m_gray_image = tresh;
+    m_gray_image = curr_gray;
 
     int n = contours.size();
     std::cout << "Contours: " << n << std::endl;
