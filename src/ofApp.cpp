@@ -3,7 +3,7 @@
 #define VERSION "0.63"
 
 #define ENABLE_RECORDING
-//#define ENABLE_WRITER
+// #define ENABLE_WRITER
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -16,7 +16,8 @@ void ofApp::setup()
 
     ofLog::setAutoSpace(false);
 
-    if (!m_config.load()) {
+    if (!m_config.load())
+    {
         common::log("load Configuration error.", OF_LOG_ERROR);
         terminate();
     }
@@ -39,7 +40,8 @@ void ofApp::setup()
 
     common::log(ss.str());
 
-    if (!m_config.isServer()) {
+    if (!m_config.isServer())
+    {
         ofSetWindowTitle("CAM-" + m_config.parameters.camname + " / " + m_config.settings.timezone);
         m_font.load(OF_TTF_SANS, 9, true, true);
     }
@@ -76,25 +78,29 @@ void ofApp::ofExit()
 //--------------------------------------------------------------
 void ofApp::update()
 {
-    if (!m_cam.read(m_frame)) {
+    if (!m_cam.read(m_frame))
+    {
         cout << "Disconnected" << endl;
 
         m_cam.release();
         ofSleepMillis(500);
 
         // m_cam.set(CAP_PROP_CONVERT_RGB, true); //dont work
-        if (m_cam.open(m_config.settings.uri, CAP_FFMPEG)) {
+        if (m_cam.open(m_config.settings.uri, CAP_FFMPEG))
+        {
             cout << "Connected" << endl;
         }
         return;
     }
 
-    if (m_frame.empty()) {
+    if (m_frame.empty())
+    {
         return;
     }
 
-    if (m_framecount++ > 1000000) m_framecount = 0;
-   // if (!m_processing) return;
+    if (m_framecount++ > 1000000)
+        m_framecount = 0;
+    // if (!m_processing) return;
 
     // Processing
     common::bgr2rgb(m_frame);
@@ -115,13 +121,14 @@ void ofApp::update()
 
 #ifdef ENABLE_RECORDING
     // use internal video writer
-    if (m_config.parameters.recordmode) {
+    if (m_config.parameters.recordmode)
+    {
         m_video_writer.add(m_frame);
     }
 #endif
 
-
-    if (!m_processing){
+    if (!m_processing)
+    {
         return;
     }
 
@@ -132,8 +139,10 @@ void ofApp::update()
     // Motion detector
     m_motion.update(m_frame);
 
-    if (m_motion_detected) {
-        if (!m_recording) {
+    if (m_motion_detected)
+    {
+        if (!m_recording)
+        {
             m_recording = true;
 
             // save the detection image
@@ -148,10 +157,13 @@ void ofApp::update()
 #endif
 
 #ifdef ENABLE_RECORDING
-            if (m_config.parameters.recordmode) {
+            if (m_config.parameters.recordmode)
+            {
                 m_video_writer.startThread();
                 m_video_writer.start();
-            } else {
+            }
+            else
+            {
                 m_cmd_recording.stop();
                 m_cmd_recording.startThread();
                 m_cmd_recording.start();
@@ -168,9 +180,12 @@ void ofApp::update()
         m_motion_detected = false;
     }
 
-    if (m_recording) {
-        if (m_timex_add_probe.elapsed()) {
-            if (m_add_detection_probe) {
+    if (m_recording)
+    {
+        if (m_timex_add_probe.elapsed())
+        {
+            if (m_add_detection_probe)
+            {
                 //          m_objdetector.add(m_frame);
             }
 
@@ -178,23 +193,29 @@ void ofApp::update()
         }
 
 #ifdef ENABLE_WRITER
-        if (m_timex_add_probe.elapsed()) {
+        if (m_timex_add_probe.elapsed())
+        {
             m_cmd_image_writer.add(m_frame);
         }
 #endif
 
-        if (m_timex_second.elapsed()) {
+        if (m_timex_second.elapsed())
+        {
             m_recording_duration--;
             m_timex_second.set();
         }
 
-        if (m_timex_stoprecording.elapsed()) {
+        if (m_timex_stoprecording.elapsed())
+        {
 #ifdef ENABLE_RECORDING
-            if (m_config.parameters.recordmode) {
+            if (m_config.parameters.recordmode)
+            {
                 m_video_writer.stop();
                 m_video_writer.close();
                 m_video_writer.stopThread();
-            } else {
+            }
+            else
+            {
                 m_cmd_recording.stop();
                 m_cmd_recording.stopThread();
             }
@@ -219,50 +240,62 @@ void ofApp::update()
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-    if (m_config.isServer()) return;
+    if (m_config.isServer())
+        return;
 
     ofBackground(ofColor::black);
 
     // draw mask polylines
-    if (m_view == 2) {
+    if (m_view == 2)
+    {
         cv::polylines(m_motion.getGrayImage(), m_motion.getMaskPoints(), true,
                       Scalar(255, 255, 255), 1, 8);
         cv::polylines(m_motion.getOutputImage(), m_motion.getMaskPoints(), true,
                       Scalar(255, 255, 255), 1, 8);
     }
 
-    switch (m_view) {
-        case 0:
-        case 1:
-            drawMat(m_resized, 0, 0);
-            break;
-        case 2:
-            drawMat(m_motion.getGrayImage(), 0, 0);
-            drawMat(m_motion.getOutputImage(), m_motion.getOutputImage().cols, 0);
-            break;
-        default:
-            return;
+    switch (m_view)
+    {
+    case 0:
+    case 1:
+        drawMat(m_resized, 0, 0);
+
+        break;
+    case 2:
+        drawMat(m_motion.getGrayImage(), 0, 0);
+        drawMat(m_motion.getOutputImage(), m_motion.getOutputImage().cols, 0);
+        break;
+    default:
+        return;
     };
 
-    if (!m_processing) return;
+    if (!m_processing)
+        return;
 
     // Draw yellow
-
 
     ofPushStyle();
     ofNoFill();
     ofSetLineWidth(1.0);
     ofSetColor(yellowPrint);
 
-    if (m_view == 1) {
+    if (m_view == 1)
+    {
         // Draw the desing polylines
-        if (m_input_mode == input_mode_t::mask) m_polyline.draw();
+        if (m_input_mode == input_mode_t::mask)
+            m_polyline.draw();
 
         // Draw the motion polyline
-        m_found_motion.draw();
+        //  m_found_motion.draw();
+
+        for (const auto &p : m_motion.m_detected_Polylines)
+        {
+            p.draw();
+        }
     }
 
-    if (m_view == 2) {
+    if (m_view == 2)
+    {
         // Draw the detected rectangle
         ofDrawRectangle(m_max_rect.x, m_max_rect.y, m_max_rect.width, m_max_rect.height);
     }
@@ -273,17 +306,20 @@ void ofApp::draw()
     //  ofNoFill();
     ofSetLineWidth(1.0);
     // Draw the scaled mask in white
-    if (m_view == 1 && m_show_mask_line) m_maskPolyLineScaled.draw();
+    if (m_view == 1 && m_show_mask_line)
+        m_maskPolyLineScaled.draw();
 
     m_font.drawString(getStatusInfo(), 1, m_height + c_window_height_offset - 8);
 
     // Display the recording time
-    if (m_recording) {
+    if (m_recording)
+    {
         ofSetColor(ofColor::white);
         m_font.drawString("REC: " + common::getElapsedTimeString(), m_width - 100,
                           m_height + c_window_height_offset - 8);
 
-        if (m_timex_recording_point.elapsed()) {
+        if (m_timex_recording_point.elapsed())
+        {
             ofSetColor(ofColor::red);
             ofDrawCircle(m_width - 110, m_height + c_window_height_offset - 14, 6);
 
@@ -292,7 +328,8 @@ void ofApp::draw()
     }
 
     // Draw the mask deisgn line
-    if (m_input_mode == input_mode_t::mask && m_polyline.size()) {
+    if (m_input_mode == input_mode_t::mask && m_polyline.size())
+    {
         ofDrawLine(m_mask_linex, m_mask_liney, m_mouseX, m_mouseY);
     }
 
@@ -300,7 +337,7 @@ void ofApp::draw()
 }
 
 //--------------------------------------------------------------
-string& ofApp::getStatusInfo()
+string &ofApp::getStatusInfo()
 {
     // clang-format off
 
@@ -352,8 +389,10 @@ void ofApp::on_mask_updated()
     const auto maskPoints = m_motion.getMaskPoints();
     m_maskPolyLineScaled.clear();
 
-    if (maskPoints.size()) {
-        for (const auto p : maskPoints) {
+    if (maskPoints.size())
+    {
+        for (const auto p : maskPoints)
+        {
             m_maskPolyLineScaled.lineTo(p.x, p.y);
         }
 
@@ -365,33 +404,51 @@ void ofApp::on_mask_updated()
 }
 
 //--------------------------------------------------------------
-void ofApp::on_motion(Rect& r)
+// void ofApp::on_motion(Rect &r)
+void ofApp::on_motion(std::vector<cv::Rect> &boxes)
 {
-    m_max_rect = r;
-    m_found_motion = m_found_motion.fromRectangle(toOf(r));
 
-    float sx = static_cast<float>(m_resized.cols * 100 / m_motion.getWidth()) / 100;
-    float sy = static_cast<float>(m_resized.rows * 100 / m_motion.getHeight()) / 100;
+    cout << "Motion detected: " << boxes.size() << " boxes" << endl;
+    for (const auto &r : boxes)
+    {
 
-    m_found_motion.scale(sx, sy);
+        m_max_rect = r;
+        m_found_motion = m_found_motion.fromRectangle(toOf(r));
+
+        //   cout << "rect: " << r.x << "," << r.y << "," << r.width << "," << r.height << endl;
+
+        float sx = static_cast<float>(m_resized.cols * 100 / m_motion.getWidth()) / 100;
+        float sy = static_cast<float>(m_resized.rows * 100 / m_motion.getHeight()) / 100;
+
+        m_found_motion.scale(sx, sy);
+
+        m_motion.m_detected_Polylines.push_back(m_found_motion);
+    }
 }
 
 //--------------------------------------------------------------
-void ofApp::on_motion_detected(Rect& r)
+// void ofApp::on_motion_detected(Rect &r)
+void ofApp::on_motion_detected(std::vector<cv::Rect> &boxes)
 {
-    if (m_motion_detected) return;
+    if (m_motion_detected)
+        return;
 
     m_motion_detected = true;
-    m_detected = m_detected.fromRectangle(toOf(r));
 
-    float sx = static_cast<float>(m_frame.cols * 100 / m_motion.getWidth()) / 100;
-    float sy = static_cast<float>(m_frame.rows * 100 / m_motion.getHeight()) / 100;
+    // cout << "Motion detected: " << boxes.size() << " boxes" << endl;
+    for (const auto &r : boxes)
+    {
+        m_detected = m_detected.fromRectangle(toOf(r));
 
-    m_detected.scale(sx, sy);
+        float sx = static_cast<float>(m_frame.cols * 100 / m_motion.getWidth()) / 100;
+        float sy = static_cast<float>(m_frame.rows * 100 / m_motion.getHeight()) / 100;
+
+        m_detected.scale(sx, sy);
+    }
 }
 
 //--------------------------------------------------------------
-void ofApp::on_finish_detections(int& count)
+void ofApp::on_finish_detections(int &count)
 {
     // m_processing = true;
     common::log("Finish detections");
@@ -401,32 +458,38 @@ void ofApp::on_finish_detections(int& count)
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
-    if (key == '1') {
+    if (key == '1')
+    {
         m_view = 1;
         return;
     }
 
-    if (key == '2') {
+    if (key == '2')
+    {
         m_view = 2;
         return;
     }
 
-    if (key == '3') {
+    if (key == '3')
+    {
         m_view = 3;
         return;
     }
 
-    if (key == '4') {
+    if (key == '4')
+    {
         m_view = 4;
         return;
     }
 
-    if (key == 'i') {
+    if (key == 'i')
+    {
         m_show_mask_line = !m_show_mask_line;
         return;
     }
 
-    if (OF_KEY_F5 == key) {
+    if (OF_KEY_F5 == key)
+    {
         m_maskPolyLineScaled.clear();
         m_motion.resetMask();
         m_input_mode = input_mode_t::mask;
@@ -440,7 +503,8 @@ void ofApp::keyReleased(int key) {}
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y)
 {
-    if (m_input_mode != input_mode_t::mask) return;
+    if (m_input_mode != input_mode_t::mask)
+        return;
 
     m_mouseX = x;
     m_mouseY = y;
@@ -452,14 +516,18 @@ void ofApp::mouseDragged(int x, int y, int button) {}
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button)
 {
-    if (m_input_mode == input_mode_t::mask) {
-        if (button == 0) {
+    if (m_input_mode == input_mode_t::mask)
+    {
+        if (button == 0)
+        {
             m_polyline.lineTo(x, y);
             m_mask_linex = x;
             m_mask_liney = y;
-
-        } else if (button == 2) {
-            if (m_polyline.size() > 1) {
+        }
+        else if (button == 2)
+        {
+            if (m_polyline.size() > 1)
+            {
                 // get the fisrt and last vertices
                 auto v1 = m_polyline.getVertices()[0];
                 auto v2 = m_polyline.getVertices().back();
@@ -467,7 +535,8 @@ void ofApp::mousePressed(int x, int y, int button)
                 Point p1(v1.x, v1.y);
                 Point p2(v2.x, v2.y);
 
-                if (p1 != p2) m_polyline.lineTo(p1.x, p1.y);
+                if (p1 != p2)
+                    m_polyline.lineTo(p1.x, p1.y);
 
                 // scale down
                 // clang-format off
@@ -478,7 +547,8 @@ void ofApp::mousePressed(int x, int y, int button)
                 m_polyline.scale(scalex, scaley);
 
                 vector<Point> maskPoints;
-                for (const auto& v : m_polyline) {
+                for (const auto &v : m_polyline)
+                {
                     maskPoints.push_back(Point(v.x, v.y));
                 }
 
