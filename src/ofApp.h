@@ -84,8 +84,12 @@ private:
   string &getStatusInfo();
   void saveDetectionImage();
 
-  void on_motion(Rect &r);
-  void on_motion_detected(Rect &r);
+  // void on_motion(Rect &r);
+  // void on_motion_detected(Rect &r);
+
+  void on_motion(std::vector<cv::Rect> &boxes);
+  void on_motion_detected(std::vector<cv::Rect> &boxes);
+
   void on_mask_updated();
   void on_finish_detections(int &count);
 

@@ -19,6 +19,87 @@ void MotionSlim::init()
     m_maskPoints = m_config.mask_points;
     create_mask();
 }
+
+void MotionSlim::update(const cv::Mat &frame)
+{
+    // --- Step 1: Convert to grayscale and resize ---
+    cv::Mat currGray;
+    cv::cvtColor(frame, currGray, cv::COLOR_BGR2GRAY);
+    cv::resize(currGray, currGray, cv::Size(c_width, c_height));
+
+    // --- Step 2: Apply mask (ROI) ---
+    currGray.setTo(0, ~m_mask);
+
+    // --- Step 3: Initialize previous frame ---
+    if (!has_prev)
+    {
+        currGray.copyTo(prev_gray);
+        has_prev = true;
+        return;
+    }
+
+    // --- Step 4: Frame difference ---
+    cv::Mat diff;
+    cv::absdiff(prev_gray, currGray, diff);
+
+    // --- Step 5: Threshold + dilation ---
+    cv::Mat thresh;
+    cv::threshold(diff, thresh, 25, 255, cv::THRESH_BINARY);
+    cv::dilate(thresh, thresh, cv::Mat(), cv::Point(-1, -1), 2);
+
+    // --- Step 6: Find contours ---
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(thresh, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+    m_gray_image = currGray;
+    m_detected_Polylines.clear();
+    // --- Step 7: Collect valid detections ---
+    std::vector<cv::Rect> boxes;
+
+    for (const auto &contour : contours)
+    {
+        double area = cv::contourArea(contour);
+
+        // Ignore noise
+        if (area < 100.0)
+            continue;
+
+        cv::Rect box = cv::boundingRect(contour);
+
+        // Ignore top region (custom rule)
+        if (box.y <= 20)
+            continue;
+
+        boxes.push_back(box);
+    }
+
+    bool foundMotion = !boxes.empty();
+
+    // --- Step 8: Emit per-frame motion event ---
+    if (foundMotion)
+    {
+        m_detections_count += boxes.size();    // count all detections
+        ofNotifyEvent(on_motion, boxes, this); // <-- vector instead of single box
+    }
+
+    // --- Step 9: Time-based aggregation ---
+    if (m_timex_detections.elapsed())
+    {
+        if (foundMotion &&
+            m_detections_count >= m_config.settings.detectionsmaxcount)
+        {
+            ofNotifyEvent(on_motion_detected, boxes, this);
+        }
+
+        m_detections_count = 0;
+        m_timex_detections.set();
+    }
+
+    // --- Step 10: Update previous frame ---
+    currGray.copyTo(prev_gray);
+}
+
+#ifdef UNUSED_ONE_BOX
 void MotionSlim::update(const cv::Mat &frame)
 {
     // --- Step 1: Convert input frame to grayscale and resize ---
@@ -105,6 +186,7 @@ void MotionSlim::update(const cv::Mat &frame)
     // --- Step 11: Update previous frame ---
     currGray.copyTo(prev_gray);
 }
+#endif
 
 #ifdef UNUSED
 void MotionSlim::update(const Mat &frame)
