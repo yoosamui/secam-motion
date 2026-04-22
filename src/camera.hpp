@@ -12,13 +12,14 @@ using namespace cv;
 
 class Camera : public cv::VideoCapture
 {
-  public:
+public:
     float m_fps = 0.0;
 
     float getFPS() { return get(CAP_PROP_FPS); }
 
-   
-    
+    // set(cv::CAP_PROP_FPS, 15); // Limit to 15 FPS
+    // cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+    // cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480)
 
     Size getSize()
     {
@@ -41,7 +42,6 @@ class Camera : public cv::VideoCapture
         return EXT;
     }
 
-    
     string toString()
     {
         stringstream ss;
@@ -52,6 +52,4 @@ class Camera : public cv::VideoCapture
 
         return ss.str();
     }
-
-  
 };
