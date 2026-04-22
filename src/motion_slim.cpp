@@ -19,7 +19,7 @@ void MotionSlim::init()
     m_maskPoints = m_config.mask_points;
     create_mask();
 }
-#define UNUSED_OPTI_BOX 1
+// #define UNUSED_OPTI_BOX 1
 #ifdef UNUSED_OPTI_BOX
 void MotionSlim::update(const cv::Mat &frame)
 {
@@ -132,7 +132,7 @@ void MotionSlim::update(const cv::Mat &frame)
 }
 #endif
 
-//#define UNUSED_MULTIPLE_BOX 1
+#define UNUSED_MULTIPLE_BOX 1
 #ifdef UNUSED_MULTIPLE_BOX
 void MotionSlim::update(const cv::Mat &frame)
 {
