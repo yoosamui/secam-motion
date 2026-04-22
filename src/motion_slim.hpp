@@ -18,6 +18,45 @@ public:
 class MotionSlim //: public IMotionSlim
 {
 
+    // Optional: Add configuration struct to header file
+    struct MotionConfig
+    {
+        // Threshold and filtering
+        int motion_threshold = 25;  // Lower = more sensitive
+        int min_area = 100;         // Minimum area to consider as motion
+        int max_area = 1000000;     // Maximum area (ignore huge regions)
+        int dilate_iterations = 2;  // Dilation iterations
+        int ignore_top_region = 20; // Pixels to ignore from top
+        int ignore_edge = 0;        // Pixels to ignore from edges
+
+        // Optimization flags
+        bool remove_noise = true;            // Apply erosion after dilation
+        bool use_temporal_smoothing = false; // Smooth between frames
+        bool use_frame_skipping = false;     // Skip frames for performance
+        int frame_skip_counter = 0;          // Current frame skip count
+
+        // Detection settings
+        struct Settings
+        {
+            int detectionsmaxcount = 3; // Minimum detections to trigger event
+        } settings;
+    };
+
+    // Optimization parameters
+    const int PROCESS_WIDTH = 160; // Tiny resolution
+    const int PROCESS_HEIGHT = 120;
+    const int FRAME_SKIP = 2;         // Process every 2nd frame
+    const int MOTION_THRESHOLD = 30;  // Higher = less sensitive but faster
+    const int MIN_MOTION_PIXELS = 50; // Minimum pixels to trigger motion
+
+    cv::Mat prevGray;
+    // bool has_prev = false;
+    int frameCount = 0;
+
+    // Performance monitoring
+    std::chrono::steady_clock::time_point lastTime;
+    float fps = 0;
+
     cv::Mat prev_gray;
     bool has_prev = false;
 
@@ -49,6 +88,7 @@ class MotionSlim //: public IMotionSlim
     vector<Point> m_maskPoints;
 
     Config &m_config = m_config.getInstance();
+    MotionConfig m_motion_config;
     // Ptr<cv::BackgroundSubtractorMOG2> m_mog2 = createBackgroundSubtractorMOG2();
     ContourFinder m_contour_finder;
 
