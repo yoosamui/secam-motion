@@ -127,19 +127,18 @@ void ofApp::update()
     }
 #endif
 
-    if (!m_processing)
-    {
-        return;
-    }
-
     m_found_motion.clear();
     m_detected.clear();
     m_max_rect = Rect(0, 0, 0, 0);
 
     // Motion detector
     m_motion.update(m_frame);
-
-    if (m_motion_detected)
+    /* if (!m_processing)
+    {
+        return;
+    }
+ */
+    if (m_motion_detected && m_processing)
     {
         if (!m_recording)
         {
@@ -269,9 +268,6 @@ void ofApp::draw()
         return;
     };
 
-    if (!m_processing)
-        return;
-
     // Draw yellow
 
     ofPushStyle();
@@ -310,6 +306,12 @@ void ofApp::draw()
         m_maskPolyLineScaled.draw();
 
     m_font.drawString(getStatusInfo(), 1, m_height + c_window_height_offset - 8);
+
+    if (!m_processing)
+    {
+        ofPopStyle();
+        return;
+    }
 
     // Display the recording time
     if (m_recording)
