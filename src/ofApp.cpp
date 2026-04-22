@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-#define VERSION "0.63"
+#define VERSION "0.65"
 
 #define ENABLE_RECORDING
 // #define ENABLE_WRITER
