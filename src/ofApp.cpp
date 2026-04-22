@@ -8,8 +8,19 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-    ofSetFrameRate(m_config.parameters.fps);
+
+    if (!m_config.isServer())
+    {
+        ofSetFrameRate(m_config.parameters.fps);
+    }
+    else
+    {
+        ofSetFrameRate(15);
+    }
+
     ofSetVerticalSync(true);
+
+    // m_cam.set(cv::CAP_PROP_FPS, 15); // Limit to 15 FPS
 
     m_width = m_config.parameters.width;
     m_height = m_config.parameters.height;
