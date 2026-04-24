@@ -1,6 +1,6 @@
 #!/bin/bash
 
-touch juan-aaaaaaaaaaaaaaaaa.txt
+#touch juan-aaaaaaaaaaaaaaaaa.txt
 #result=`./objdetector -c=0.53 -d=$1 -t=$2`
 result=`./objectdetector $1 $2`
 

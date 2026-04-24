@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-//#include "ofThread.h"
+// #include "ofThread.h"
 #include "config.h"
 #include "ofxCv.h"
 #include "ofxOpenCv.h"
@@ -12,36 +12,56 @@ using namespace std;
 
 namespace common
 {
-    void log(const string& message, ofLogLevel level = OF_LOG_NOTICE);
-    void bgr2rgb(cv::Mat& img);
+  void log(const string &message, ofLogLevel level = OF_LOG_NOTICE);
+  void bgr2rgb(cv::Mat &img);
 
-    int getSeconds(const string& t);
-    int getHours(const string& t);
+  int getSeconds(const string &t);
+  int getHours(const string &t);
 
-    string get_filepath(const string& prefix, const string& extension, int ret = 0);
-    string getElapsedTimeString();
-    string getTimestampMillis(const string& time_zone, const string& format_string = "%Y.%m.%d %T");
-    string getTimestamp(const string& time_zone, const string& format_string = "%Y.%m.%d %T");
-    string trim(const string& s);
-    string exec(const char* cmd);
+  string get_filepath(const string &prefix, const string &extension, int ret = 0);
+  string getElapsedTimeString();
+  string getTimestampMillis(const string &time_zone, const string &format_string = "%Y.%m.%d %T");
+  string getTimestamp(const string &time_zone, const string &format_string = "%Y.%m.%d %T");
+  string trim(const string &s);
+  string exec(const char *cmd);
 
-    class Timex
+  /*   class Timex
     {
-      private:
-        uint64_t m_limit = 0;
-        uint64_t m_previousMillis = 0;
-        uint64_t m_currentMillis = 0;
+    private:
+      uint64_t m_limit = 0;
+      uint64_t m_previousMillis = 0;
+      uint64_t m_currentMillis = 0;
 
-        bool m_result = false;
+      bool m_result = false;
 
-      public:
-        Timex();
-        Timex(uint64_t m_limit);
+    public:
+      Timex();
+      Timex(uint64_t m_limit);
 
-        void setLimit(uint64_t limit);
-        void reset();
-        void set();
+      void setLimit(uint64_t limit);
+      void reset();
+      void set();
 
-        bool elapsed();
-    };
-}  // namespace common
+      long elapsed();
+    }; */
+
+  class Timex
+  {
+  public:
+    Timex();
+    Timex(uint64_t limit);
+
+    void setLimit(uint64_t limit);
+    bool elapsed(); 
+    uint64_t elapsed_millis(); // <-- changed to uint64_t
+
+    void set();
+    void reset();
+
+  private:
+    uint64_t m_limit = 0;
+    uint64_t m_previousMillis = 0;
+    uint64_t m_currentMillis = 0;
+  };
+
+} // namespace common

@@ -68,7 +68,7 @@ void ofApp::setup()
     m_timex_stoprecording.setLimit(m_config.parameters.videoduration * 1000);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
-    m_timex_add_probe.setLimit(14000);
+    m_timex_add_probe.setLimit(1500);
 
 #ifdef ENABLE_WRITER
     cout << "Start image writer thread." << endl;
@@ -196,7 +196,7 @@ void ofApp::update()
     {
         if (m_timex_add_probe.elapsed())
         {
-          /*   if (m_add_detection_probe)
+            if (m_add_detection_probe)
             {
                 // nur ein mal adden, damit die CPU nicht überlastet wird, wenn die Erkennung zu lange dauert.
                 m_add_detection_probe = false;
@@ -204,11 +204,11 @@ void ofApp::update()
                 saveDetectionImage();
                 m_cmd_image_writer.setPath(m_detection_image);
 
-                cout << "[*] Add probe to detector." << m_detection_image << endl;
+                cout << "[ * ] >>> Add probe to detector." << m_detection_image << endl;
                 m_cmd_image_writer.add(m_frame);
-                cout << "Elapsed time for adding probe: " << m_timex_add_probe.elapsed() << " ms" << endl;
-            } */
-            cout << "[ * ] .... Elapsed time for adding probe: " << to_string(m_timex_add_probe.elapsed()) << " ms" << endl;
+                cout << "[ * ] >>> Elapsed time for adding probe: " << to_string(m_timex_add_probe.elapsed_millis() / 1000) << " ms" << endl;
+            }
+
             m_timex_add_probe.reset();
         }
 
@@ -222,8 +222,9 @@ void ofApp::update()
 
         if (m_timex_second.elapsed())
         {
+            // common::log("Recording time left: " + to_string(m_recording_duration) + " seconds.");
             m_recording_duration--;
-            m_timex_second.reset();
+            m_timex_second.set();
         }
 
         if (m_timex_stoprecording.elapsed())
