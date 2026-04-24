@@ -124,7 +124,7 @@ void MotionSlim::update(const cv::Mat &frame)
             ofNotifyEvent(on_motion_detected, boxes, this);
         }
         m_detections_count = 0;
-        m_timex_detections.set();
+        m_timex_detections.reset();
     }
 
     // --- Step 10: Update previous frame (fixed) ---
@@ -213,7 +213,7 @@ void MotionSlim::update(const cv::Mat &frame)
         }
 
         m_detections_count = 0;
-        m_timex_detections.set();
+        m_timex_detections.reset();
     }
 
     // --- Step 10: Update previous frame ---
@@ -301,7 +301,7 @@ void MotionSlim::update(const cv::Mat &frame)
 
         // Reset counter and timer
         m_detections_count = 0;
-        m_timex_detections.set();
+        m_timex_detections.reset();
     }
 
     // --- Step 11: Update previous frame ---

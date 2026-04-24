@@ -81,7 +81,10 @@ private:
   common::Timex m_timex_recording_point;
   common::Timex m_timex_add_probe;
 
+  string m_detection_image;
+  
   string &getStatusInfo();
+
   void saveDetectionImage();
 
   // void on_motion(Rect &r);

@@ -1,7 +1,8 @@
 #!/bin/bash
 
-
-result=`./objdetector -c=0.53 -d=$1 -t=$2`
+touch juan-aaaaaaaaaaaaaaaaa.txt
+#result=`./objdetector -c=0.53 -d=$1 -t=$2`
+result=`./objectdetector $1 $2`
 
 # if [ "$result" == "1" ]; then
 # do something...
