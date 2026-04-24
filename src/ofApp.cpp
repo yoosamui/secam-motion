@@ -3,7 +3,7 @@
 #define VERSION "0.65"
 
 #define ENABLE_RECORDING
-// #define ENABLE_WRITER
+#define ENABLE_WRITER 1
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -68,9 +68,10 @@ void ofApp::setup()
     m_timex_stoprecording.setLimit(m_config.parameters.videoduration * 1000);
     m_timex_second.setLimit(1000);
     m_timex_recording_point.setLimit(1000);
-    m_timex_add_probe.setLimit(2000);
+    m_timex_add_probe.setLimit(14000);
 
 #ifdef ENABLE_WRITER
+    cout << "Start image writer thread." << endl;
     m_cmd_image_writer.startThread();
 #endif
     //   m_objdetector.startThread();
@@ -163,7 +164,8 @@ void ofApp::update()
             m_add_detection_probe = true;
 
 #ifdef ENABLE_WRITER
-            m_cmd_image_writer.setPath();
+            //  cout << "Set path for image writer: " << m_detection_image << endl;
+            // m_cmd_image_writer.setPath(m_detection_image);
 #endif
 
 #ifdef ENABLE_RECORDING
@@ -194,25 +196,34 @@ void ofApp::update()
     {
         if (m_timex_add_probe.elapsed())
         {
-            if (m_add_detection_probe)
+          /*   if (m_add_detection_probe)
             {
-                //          m_objdetector.add(m_frame);
-            }
+                // nur ein mal adden, damit die CPU nicht überlastet wird, wenn die Erkennung zu lange dauert.
+                m_add_detection_probe = false;
 
-            m_timex_add_probe.set();
+                saveDetectionImage();
+                m_cmd_image_writer.setPath(m_detection_image);
+
+                cout << "[*] Add probe to detector." << m_detection_image << endl;
+                m_cmd_image_writer.add(m_frame);
+                cout << "Elapsed time for adding probe: " << m_timex_add_probe.elapsed() << " ms" << endl;
+            } */
+            cout << "[ * ] .... Elapsed time for adding probe: " << to_string(m_timex_add_probe.elapsed()) << " ms" << endl;
+            m_timex_add_probe.reset();
         }
 
-#ifdef ENABLE_WRITER
-        if (m_timex_add_probe.elapsed())
-        {
-            m_cmd_image_writer.add(m_frame);
-        }
-#endif
+        /* #ifdef ENABLE_WRITER
+                if (m_timex_add_probe.elapsed())
+                {
+                    //     cout << "Add probe to writer." << endl;
+                    //     m_cmd_image_writer.add(m_frame);
+                }
+        #endif */
 
         if (m_timex_second.elapsed())
         {
             m_recording_duration--;
-            m_timex_second.set();
+            m_timex_second.reset();
         }
 
         if (m_timex_stoprecording.elapsed())
@@ -242,7 +253,7 @@ void ofApp::update()
             m_recording_duration = m_config.parameters.videoduration;
             m_recording = false;
 
-            m_timex_stoprecording.set();
+            m_timex_stoprecording.reset();
         }
     }
 }
@@ -336,7 +347,7 @@ void ofApp::draw()
             ofSetColor(ofColor::red);
             ofDrawCircle(m_width - 110, m_height + c_window_height_offset - 14, 6);
 
-            m_timex_recording_point.set();
+            m_timex_recording_point.reset();
         }
     }
 
@@ -392,6 +403,8 @@ void ofApp::saveDetectionImage()
 
     string filename = common::get_filepath("motion_" + m_config.parameters.camname, ".jpg", 1);
     cv::rectangle(img, r, cv::Scalar(0, 0, 255), 2);
+
+    m_detection_image = filename;
 
     imwrite(filename, img);
 }
