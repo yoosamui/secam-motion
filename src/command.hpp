@@ -88,7 +88,7 @@ class CommandWriter : public ofThread
 
     bool m_processing = false;
     int m_count = 0;
-    bool m_found = false;
+    //   bool m_found = false;
 
     string m_filename;
     string m_directory;
@@ -96,6 +96,8 @@ class CommandWriter : public ofThread
     Config &m_config = m_config.getInstance();
 
 public:
+    bool m_found = false;
+
     CommandWriter() {}
 
     void setPath(const string &filename)
@@ -160,10 +162,16 @@ public:
                 string command = "bash start-detector.sh " + m_filename + " " + m_filename + "_PERSON";
                 common::log(command);
                 auto result = common::exec(command.c_str());
-                m_found = result == "detections=0";
+                common::log(common::trim(result));
+                m_found = result != "detections=0";
+                cout << "m_found detected" << m_found << " " << ">" << result << "<" << endl;
 
-                // common::log("Detection finish. " + result);
-                common::log(result);
+              /*   if (m_found)
+                {
+                    cout << "object command  detected................................" << result << endl;
+                    // terminate();
+                    //
+                } */
 
                 m_processing = false;
             }
