@@ -53,6 +53,7 @@ private:
   bool m_recording = false;
   bool m_motion_detected = false;
   bool m_add_detection_probe = false;
+  bool m_objectdetected = false;
   bool m_processing = false;
   bool m_show_mask_line = false;
 

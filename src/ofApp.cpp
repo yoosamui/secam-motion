@@ -196,28 +196,53 @@ void ofApp::update()
     {
         if (m_timex_add_probe.elapsed())
         {
-            // cout << "Elapsed time for adding probe: " << m_motion_detected << endl;
-            if (m_add_detection_probe)
+
+            if (m_cmd_image_writer.m_found && !m_objectdetected)
+            {
+                common::log("Object detected by detector.");
+                m_objectdetected = true;
+            }
+            else if (!m_objectdetected)
             {
 
-                //   m_add_detection_probe = false;
-                if (m_add_detection_probe_count++ >= 2)
+                if (m_add_detection_probe_count++ >= 4 && !m_objectdetected)
                 {
-                    // nur ein mal adden, damit die CPU nicht überlastet wird, wenn die Erkennung zu lange dauert.
+                    // avoid more detection probe, if the object is not detected after 4 probes,
+                    // to avoid overloading the CPU.
                     m_add_detection_probe = false;
                 }
 
+                // object not found, add a frame to the detector as probe.
                 saveDetectionImage();
                 m_cmd_image_writer.setPath(m_detection_image);
 
-                // if (m_add_detection_probe_count == 1)
-                {
-                    cout << "[ * ] >>> Add probe to detector." << m_detection_image << endl;
-                    m_cmd_image_writer.add(m_frame);
-                    cout << "[ * ] >>> Elapsed time for adding probe: " << to_string(m_timex_add_probe.elapsed_millis() / 1000) << " ms" << endl;
-                }
+                cout << "[ * ] >>> Add probe to detector." << m_detection_image << endl;
+                m_cmd_image_writer.add(m_frame);
+                cout << "[ * ] >>> Elapsed time for adding probe: " << to_string(m_timex_add_probe.elapsed_millis() / 1000) << " ms" << endl;
             }
 
+            // cout << "Elapsed time for adding probe: " << m_motion_detected << endl;
+            /*  if (m_add_detection_probe)
+             {
+
+                 //   m_add_detection_probe = false;
+                 if (m_add_detection_probe_count++ >= 2)
+                 {
+                     // nur ein mal adden, damit die CPU nicht überlastet wird, wenn die Erkennung zu lange dauert.
+                     m_add_detection_probe = false;
+                 }
+
+                 saveDetectionImage();
+                 m_cmd_image_writer.setPath(m_detection_image);
+
+                 // if (m_add_detection_probe_count == 1)
+                 {
+                     cout << "[ * ] >>> Add probe to detector." << m_detection_image << endl;
+                     m_cmd_image_writer.add(m_frame);
+                     cout << "[ * ] >>> Elapsed time for adding probe: " << to_string(m_timex_add_probe.elapsed_millis() / 1000) << " ms" << endl;
+                 }
+             }
+  */
             m_timex_add_probe.reset();
         }
 
@@ -263,7 +288,7 @@ void ofApp::update()
 
             m_recording_duration = m_config.parameters.videoduration;
             m_recording = false;
-
+            m_objectdetected = false;
             m_timex_stoprecording.reset();
         }
     }
