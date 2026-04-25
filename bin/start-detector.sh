@@ -1,17 +1,20 @@
 #!/bin/bash
 
+result=`./objectdetector $1 $2`
 
-result=`./objdetector -c=0.53 -d=$1 -t=$2`
+if [ "$result" == "detections=0" ]; then
 
-# if [ "$result" == "1" ]; then
-# do something...
-# fi
+    file=$1
 
+    rm -f $file
+    
+    file=$2
+    
+    rm -f $file
+    
+    
+fi
 
-
-file=$1
-file=$file$"/image*.jpg"
-rm -f $file
 echo $result
 
 

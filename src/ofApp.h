@@ -43,12 +43,17 @@ private:
   int m_mouseY = 0;
   int m_view = 1;
   int m_framecount = 0;
+  int m_add_detection_probe_count = 0;
+
+
+  string m_detection_image_temp;
 
   string m_statusinfo;
 
   bool m_recording = false;
   bool m_motion_detected = false;
   bool m_add_detection_probe = false;
+  bool m_objectdetected = false;
   bool m_processing = false;
   bool m_show_mask_line = false;
 
@@ -81,9 +86,13 @@ private:
   common::Timex m_timex_recording_point;
   common::Timex m_timex_add_probe;
 
-  string &getStatusInfo();
-  void saveDetectionImage();
+  string m_detection_image;
+  // string m_detection_image_temp;
 
+  string &getStatusInfo();
+
+  void saveDetectionImage();
+  void saveDetectionImage_temp();
   // void on_motion(Rect &r);
   // void on_motion_detected(Rect &r);
 
