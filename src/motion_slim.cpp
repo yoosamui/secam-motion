@@ -88,6 +88,13 @@ void MotionSlim::update(const cv::Mat &frame)
 
     // --- Step 7: Collect valid detections ---
     std::vector<cv::Rect> boxes;
+    int n = contours.size();
+    //   if (n > 6)
+    {
+        cout << " ............contours.size: " << to_string(n) << endl;
+        //     return; // Skip processing if too many contours (likely noise)
+    }
+
     boxes.reserve(contours.size());
 
     const float minArea = 100.0f;
@@ -124,7 +131,7 @@ void MotionSlim::update(const cv::Mat &frame)
             ofNotifyEvent(on_motion_detected, boxes, this);
         }
         m_detections_count = 0;
-        m_timex_detections.set();
+        m_timex_detections.reset();
     }
 
     // --- Step 10: Update previous frame (fixed) ---
@@ -176,7 +183,16 @@ void MotionSlim::update(const cv::Mat &frame)
     m_detected_Polylines.clear();
     // --- Step 7: Collect valid detections ---
     std::vector<cv::Rect> boxes;
+    int n = contours.size();
+    /* if (n > 20)
+       {
+           cout << " ............contours.size: " << to_string(n) << endl;
+           // Skip countours if too many (likely noise)
+             contours.clear();
 
+           //return;
+       }
+   */
     for (const auto &contour : contours)
     {
         double area = cv::contourArea(contour);
@@ -191,7 +207,8 @@ void MotionSlim::update(const cv::Mat &frame)
         if (box.y <= 20)
             continue;
 
-        boxes.push_back(box);
+        if (n < 20)
+            boxes.push_back(box);
     }
 
     bool foundMotion = !boxes.empty();
@@ -213,7 +230,7 @@ void MotionSlim::update(const cv::Mat &frame)
         }
 
         m_detections_count = 0;
-        m_timex_detections.set();
+        m_timex_detections.reset();
     }
 
     // --- Step 10: Update previous frame ---
@@ -301,7 +318,7 @@ void MotionSlim::update(const cv::Mat &frame)
 
         // Reset counter and timer
         m_detections_count = 0;
-        m_timex_detections.set();
+        m_timex_detections.reset();
     }
 
     // --- Step 11: Update previous frame ---

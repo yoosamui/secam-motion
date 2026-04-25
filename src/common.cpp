@@ -28,7 +28,7 @@ namespace common
     // OF_LOG_FATAL_ERROR
     // OF_LOG_SILENT
     //
-    void log(const string& message, ofLogLevel level)
+    void log(const string &message, ofLogLevel level)
     {
         ofLogToFile("data/logs/" + Config::getInstance().parameters.camname + ".log", true);
         ofLog(level) << message << endl;
@@ -37,7 +37,7 @@ namespace common
         ofLog(level) << message << endl;
     }
 
-    string getTimestamp(const string& time_zone, const string& format_string)
+    string getTimestamp(const string &time_zone, const string &format_string)
     {
         time_t t = time(nullptr);
         char buf[32];
@@ -51,7 +51,7 @@ namespace common
         return buf;
     }
 
-    string getTimestampMillis(const string& time_zone, const string& format_string)
+    string getTimestampMillis(const string &time_zone, const string &format_string)
     {
         // char buf[32];
 
@@ -72,22 +72,24 @@ namespace common
         return nowSs.str();
     }
 
-    string get_filepath(const string& prefix, const string& extension, int ret)
+    string get_filepath(const string &prefix, const string &extension, int ret)
     {
         string m_source_dir;
         string m_file;
 
-        Config& m_config = m_config.getInstance();
+        Config &m_config = m_config.getInstance();
 
         const string timestamp = getTimestamp(m_config.settings.timezone, "%T");
         const string timestampMillis = getTimestampMillis(m_config.settings.timezone, "%T");
 
-        try {
+        try
+        {
             m_source_dir =
                 m_config.settings.storage + common::getTimestamp(m_config.settings.timezone, "%F");
             boost::filesystem::create_directory(m_source_dir);
-
-        } catch (boost::filesystem::filesystem_error& e) {
+        }
+        catch (boost::filesystem::filesystem_error &e)
+        {
             common::log(e.what(), OF_LOG_ERROR);
         }
 
@@ -100,17 +102,21 @@ namespace common
      *  ausume t hast yyyy.mm.dd hh:mm:ss format
      *  and the length must be 19 characters.
      */
-    int getHours(const string& t)
+    int getHours(const string &t)
     {
         size_t l = t.length();
-        if (l != 19) return 0;
+        if (l != 19)
+            return 0;
 
         size_t idx = t.find(" ");
-        if (idx == string::npos) return 0;
+        if (idx == string::npos)
+            return 0;
 
         string cumulator{};
-        for (size_t i = idx; i < l; ++i) {
-            if (t[i] == ':') {
+        for (size_t i = idx; i < l; ++i)
+        {
+            if (t[i] == ':')
+            {
                 return stoi(cumulator);
             }
 
@@ -124,17 +130,21 @@ namespace common
      *  ausume t hast yyyy.mm.dd hh:mm:ss format
      *  and the length must be 19 characters.
      */
-    int getSeconds(const string& t)
+    int getSeconds(const string &t)
     {
         size_t l = t.length();
-        if (l != 19) return 0;
+        if (l != 19)
+            return 0;
 
         size_t idx = t.find(":");
-        if (idx == string::npos) return 0;
+        if (idx == string::npos)
+            return 0;
 
         string cumulator{};
-        for (size_t i = idx + 1; i < l; ++i) {
-            if (t[i] == ':') {
+        for (size_t i = idx + 1; i < l; ++i)
+        {
+            if (t[i] == ':')
+            {
                 return stoi(cumulator);
             }
 
@@ -149,14 +159,16 @@ namespace common
     // When you display an image loaded with OpenCv in VideoCapture the channels will
     // be back to front.
     // avoid cvtColor(img, frame, COLOR_BGR2RGB) High CPU Usage.
-    void bgr2rgb(cv::Mat& img)
+    void bgr2rgb(cv::Mat &img)
     {
         uchar r, g, b;
         // loop inside the image matrix
-        for (int y = 0; y < img.rows; y++) {
-            uchar* color = img.ptr<uchar>(y);  // point to first color in row
-            uchar* pixel = color;
-            for (int x = 0; x < img.cols; x++) {
+        for (int y = 0; y < img.rows; y++)
+        {
+            uchar *color = img.ptr<uchar>(y); // point to first color in row
+            uchar *pixel = color;
+            for (int x = 0; x < img.cols; x++)
+            {
                 // get the BGR color
                 b = *color++;
                 g = *color++;
@@ -180,10 +192,18 @@ namespace common
     {
         this->m_limit = limit;
     }
+    uint64_t Timex::elapsed_millis()
+    {
+        m_currentMillis = ofGetElapsedTimeMillis();
+        return m_currentMillis - m_previousMillis;
+    }
+
     bool Timex::elapsed()
     {
         m_currentMillis = ofGetElapsedTimeMillis();
         return (m_currentMillis - m_previousMillis >= m_limit);
+
+        // return m_currentMillis - m_previousMillis >= m_limit);
     }
     void Timex::set()
     {
@@ -191,30 +211,39 @@ namespace common
     }
     void Timex::reset()
     {
+        m_currentMillis = ofGetElapsedTimeMillis();
         m_previousMillis = ofGetElapsedTimeMillis();
     }
-    string trim(const string& s)
+    string trim(const string &s)
     {
         string::const_iterator it = s.begin();
-        while (it != s.end() && isspace(*it)) it++;
+        while (it != s.end() && isspace(*it))
+            it++;
 
         string::const_reverse_iterator rit = s.rbegin();
-        while (rit.base() != it && isspace(*rit)) rit++;
+        while (rit.base() != it && isspace(*rit))
+            rit++;
 
         return string(it, rit.base());
     }
 
-    string exec(const char* cmd)
+    string exec(const char *cmd)
     {
         char buffer[NAME_MAX];
         string result = "";
-        FILE* pipe = popen(cmd, "r");
-        if (!pipe) throw runtime_error("popen() failed!");
-        try {
-            while (!feof(pipe)) {
-                if (fgets(buffer, 128, pipe) != NULL) result += buffer;
+        FILE *pipe = popen(cmd, "r");
+        if (!pipe)
+            throw runtime_error("popen() failed!");
+        try
+        {
+            while (!feof(pipe))
+            {
+                if (fgets(buffer, 128, pipe) != NULL)
+                    result += buffer;
             }
-        } catch (...) {
+        }
+        catch (...)
+        {
             pclose(pipe);
             throw;
         }
@@ -222,4 +251,4 @@ namespace common
 
         return trim(result);
     }
-}  // namespace common
+} // namespace common
