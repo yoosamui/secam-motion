@@ -160,10 +160,11 @@ public:
                 string command = "bash start-detector.sh " + m_filename + " " + m_filename + "_PERSON";
                 common::log(command);
                 auto result = common::exec(command.c_str());
+                m_found = result == "detections=0";
 
-                common::log("Detection finish. " + result);
+                // common::log("Detection finish. " + result);
+                common::log(result);
 
-                m_found = result == "1";
                 m_processing = false;
             }
             ofSleepMillis(10);

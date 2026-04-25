@@ -43,6 +43,10 @@ private:
   int m_mouseY = 0;
   int m_view = 1;
   int m_framecount = 0;
+  int m_add_detection_probe_count = 0;
+
+
+  string m_detection_image_temp;
 
   string m_statusinfo;
 
@@ -82,11 +86,12 @@ private:
   common::Timex m_timex_add_probe;
 
   string m_detection_image;
-  
+  // string m_detection_image_temp;
+
   string &getStatusInfo();
 
   void saveDetectionImage();
-
+  void saveDetectionImage_temp();
   // void on_motion(Rect &r);
   // void on_motion_detected(Rect &r);
 
