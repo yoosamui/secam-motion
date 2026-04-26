@@ -162,10 +162,11 @@ void ofApp::update()
             //    m_objdetector.setPath();
             //   m_objdetector.add(m_frame);
             m_add_detection_probe = true;
+            m_objectdetected = false;
 
 #ifdef ENABLE_WRITER
             //  cout << "Set path for image writer: " << m_detection_image << endl;
-            // m_cmd_image_writer.setPath(m_detection_image);
+            m_cmd_image_writer.setPath(m_detection_image);
 #endif
 
 #ifdef ENABLE_RECORDING
@@ -196,54 +197,59 @@ void ofApp::update()
     {
         if (m_timex_add_probe.elapsed())
         {
-
+            // 1. If already detected → stop everything
+            /* if (m_objectdetected)
+            {
+                cout << "Object already detected, skip probing." << endl;
+                m_timex_add_probe.reset();
+                m_objectdetected = false;
+                m_add_detection_probe = false;
+                return;
+            }
+            else
+ */
+            // 2. Check detector result
             if (m_cmd_image_writer.m_found && !m_objectdetected)
             {
                 common::log("Object detected by detector.");
+
                 m_objectdetected = true;
+                m_add_detection_probe = false;
+
+                // 👉 Start recording here if needed
+                // m_is_recording = true;
+
+                //  m_timex_add_probe.reset();
+                //   return;
             }
-            else if (!m_objectdetected)
+
+            // 3. No detection → try probes
+            if (/*m_add_detection_probe &&*/ !m_objectdetected)
             {
+                std::cout << "Object not detected, adding probe..." << std::endl;
 
-                if (m_add_detection_probe_count++ >= 4 && !m_objectdetected)
+                if (m_add_detection_probe_count++ <= 2) // Try up to 3 times
                 {
-                    // avoid more detection probe, if the object is not detected after 4 probes,
-                    // to avoid overloading the CPU.
-                    m_add_detection_probe = false;
+                    // m_add_detection_probe_count = 0;
+                    std::cout << "[!] Max probe attempts reached. Stop probing. " << m_add_detection_probe_count << std::endl;
+                    m_add_detection_probe = true;
                 }
+                else if (m_add_detection_probe)
+                {
+                    saveDetectionImage();
+                    m_cmd_image_writer.setPath(m_detection_image);
 
-                // object not found, add a frame to the detector as probe.
-                saveDetectionImage();
-                m_cmd_image_writer.setPath(m_detection_image);
+                    std::cout << "[ * ] >>> Add probe: " << m_detection_image << std::endl;
 
-                cout << "[ * ] >>> Add probe to detector." << m_detection_image << endl;
-                m_cmd_image_writer.add(m_frame);
-                cout << "[ * ] >>> Elapsed time for adding probe: " << to_string(m_timex_add_probe.elapsed_millis() / 1000) << " ms" << endl;
+                    m_cmd_image_writer.add(m_frame);
+
+                    std::cout << "[ * ] >>> Elapsed: "
+                              << (m_timex_add_probe.elapsed_millis() / 1000)
+                              << " s" << std::endl;
+                }
             }
 
-            // cout << "Elapsed time for adding probe: " << m_motion_detected << endl;
-            /*  if (m_add_detection_probe)
-             {
-
-                 //   m_add_detection_probe = false;
-                 if (m_add_detection_probe_count++ >= 2)
-                 {
-                     // nur ein mal adden, damit die CPU nicht überlastet wird, wenn die Erkennung zu lange dauert.
-                     m_add_detection_probe = false;
-                 }
-
-                 saveDetectionImage();
-                 m_cmd_image_writer.setPath(m_detection_image);
-
-                 // if (m_add_detection_probe_count == 1)
-                 {
-                     cout << "[ * ] >>> Add probe to detector." << m_detection_image << endl;
-                     m_cmd_image_writer.add(m_frame);
-                     cout << "[ * ] >>> Elapsed time for adding probe: " << to_string(m_timex_add_probe.elapsed_millis() / 1000) << " ms" << endl;
-                 }
-             }
-  */
-            m_timex_add_probe.reset();
+            m_timex_add_probe.set();
         }
 
         /* #ifdef ENABLE_WRITER
@@ -276,8 +282,11 @@ void ofApp::update()
                 m_cmd_recording.stopThread();
             }
             //  m_objdetector.stopThread();
-            m_add_detection_probe = false;
+
+            m_add_detection_probe = true; // ✅ enable probing again
             m_add_detection_probe_count = 0;
+            m_objectdetected = false;
+
             common::log("Recording finish.");
 #endif
 
