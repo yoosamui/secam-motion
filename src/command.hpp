@@ -166,12 +166,12 @@ public:
                 m_found = result != "detections=0";
                 cout << "m_found detected" << m_found << " " << ">" << result << "<" << endl;
 
-              /*   if (m_found)
-                {
-                    cout << "object command  detected................................" << result << endl;
-                    // terminate();
-                    //
-                } */
+                /*   if (m_found)
+                  {
+                      cout << "object command  detected................................" << result << endl;
+                      // terminate();
+                      //
+                  } */
 
                 m_processing = false;
             }
