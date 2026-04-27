@@ -254,7 +254,7 @@ void ofApp::update()
 
             m_recording_duration = m_config.parameters.videoduration;
             m_recording = false;
-            m_objectdetected = false;
+          
             m_timex_stoprecording.reset();
         }
     }
