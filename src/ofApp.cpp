@@ -200,10 +200,11 @@ void ofApp::update()
 
             if (!m_objectdetected && m_add_detection_probe_count++ < 6)
             {
-                cout << "Add probe to writer." << endl;
+                cout << "Add probe to writer.\n"
+                     << endl;
                 saveDetectionImage();
                 m_cmd_image_writer.setPath(m_detection_image);
-                std::cout << "[ * ] >>> Add probe: " << m_objectdetected << std::endl;
+                std::cout << "[ * ] >>> Add probe: " << m_add_detection_probe_count << std::endl;
                 m_cmd_image_writer.add(m_frame);
             }
 
