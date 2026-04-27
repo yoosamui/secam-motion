@@ -62,7 +62,7 @@ void ofApp::setup()
     ofAddListener(m_motion.on_mask_updated, this, &ofApp::on_mask_updated);
 
     //    ofAddListener(m_objdetector.on_finish_detections, this, &ofApp::on_finish_detections);
-
+    ofAddListener(m_cmd_image_writer.on_object_detected, this, &ofApp::on_object_detected);
     m_motion.init();
 
     m_timex_stoprecording.setLimit(m_config.parameters.videoduration * 1000);
@@ -197,56 +197,13 @@ void ofApp::update()
     {
         if (m_timex_add_probe.elapsed())
         {
-            // 1. If already detected → stop everything
-            /* if (m_objectdetected)
+
+            if (!m_objectdetected && m_add_detection_probe_count++ < 6)
             {
-                cout << "Object already detected, skip probing." << endl;
-                m_timex_add_probe.reset();
-                m_objectdetected = false;
-                m_add_detection_probe = false;
-                return;
-            }
-            else
- */
-            // 2. Check detector result
-            if (m_cmd_image_writer.m_found && !m_objectdetected)
-            {
-                common::log("Object detected by detector.");
-
-                m_objectdetected = true;
-                m_add_detection_probe = false;
-
-                // 👉 Start recording here if needed
-                // m_is_recording = true;
-
-                //  m_timex_add_probe.reset();
-                //   return;
-            }
-
-            // 3. No detection → try probes
-            if (/*m_add_detection_probe &&*/ !m_objectdetected)
-            {
-                std::cout << "Object not detected, adding probe..." << std::endl;
-
-                if (m_add_detection_probe_count++ <= 2) // Try up to 3 times
-                {
-                    // m_add_detection_probe_count = 0;
-                    std::cout << "[!] Max probe attempts reached. Stop probing. " << m_add_detection_probe_count << std::endl;
-                    m_add_detection_probe = true;
-                }
-                else if (m_add_detection_probe)
-                {
-                    saveDetectionImage();
-                    m_cmd_image_writer.setPath(m_detection_image);
-
-                    std::cout << "[ * ] >>> Add probe: " << m_detection_image << std::endl;
-
-                    m_cmd_image_writer.add(m_frame);
-
-                    std::cout << "[ * ] >>> Elapsed: "
-                              << (m_timex_add_probe.elapsed_millis() / 1000)
-                              << " s" << std::endl;
-                }
+                saveDetectionImage();
+                m_cmd_image_writer.setPath(m_detection_image);
+                std::cout << "[ * ] >>> Add probe: " << m_objectdetected << std::endl;
+                m_cmd_image_writer.add(m_frame);
             }
 
             m_timex_add_probe.set();
@@ -473,6 +430,12 @@ void ofApp::saveDetectionImage_temp()
     m_detection_image_temp = "_temp-" + filename;
 
     imwrite(filename, img);
+}
+
+void ofApp::on_object_detected()
+{
+    cout << "Object detected event received in ofApp." << endl;
+    m_objectdetected = true;
 }
 //--------------------------------------------------------------
 void ofApp::on_mask_updated()
