@@ -200,6 +200,7 @@ void ofApp::update()
 
             if (!m_objectdetected && m_add_detection_probe_count++ < 6)
             {
+                cout << "Add probe to writer." << endl;
                 saveDetectionImage();
                 m_cmd_image_writer.setPath(m_detection_image);
                 std::cout << "[ * ] >>> Add probe: " << m_objectdetected << std::endl;
@@ -254,7 +255,7 @@ void ofApp::update()
 
             m_recording_duration = m_config.parameters.videoduration;
             m_recording = false;
-          
+
             m_timex_stoprecording.reset();
         }
     }
