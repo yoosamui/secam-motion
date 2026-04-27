@@ -1,0 +1,28 @@
+<config>
+    <uri>rtsp://admin:<PASS>Pi@192.168.1.99:554/Streaming/channels/101</uri>
+   <Xuri>data/2_gate.mp4</Xuri>
+
+    <minrectwidth>5</minrectwidth>
+    <maxrectwidth>200</maxrectwidth>
+    <minarearadius>1</minarearadius>
+    <mincontoursize>4</mincontoursize>
+    <minthreshold>80</minthreshold>
+    <detectionsmaxcount>5</detectionsmaxcount>
+    <timezone>Asia/Bangkok</timezone>
+    <storage>/media/yoo/data/back/Dropbox/survillance</storage>
+ <maskpoints>
+        <point x="0" y="237"></point>
+        <point x="0" y="237"></point>
+        <point x="0" y="112"></point>
+        <point x="118" y="101"></point>
+        <point x="206" y="87"></point>
+        <point x="239" y="92"></point>
+        <point x="276" y="95"></point>
+        <point x="295" y="108"></point>
+        <point x="305" y="152"></point>
+        <point x="280" y="200"></point>
+        <point x="269" y="238"></point>
+        <point x="0" y="237"></point>
+    </maskpoints>
+
+</config>
