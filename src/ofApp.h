@@ -45,7 +45,6 @@ private:
   int m_framecount = 0;
   int m_add_detection_probe_count = 0;
 
-
   string m_detection_image_temp;
 
   string m_statusinfo;
@@ -98,7 +97,7 @@ private:
 
   void on_motion(std::vector<cv::Rect> &boxes);
   void on_motion_detected(std::vector<cv::Rect> &boxes);
-
+  void on_object_detected();
   void on_mask_updated();
   void on_finish_detections(int &count);
 
