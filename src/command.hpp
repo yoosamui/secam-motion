@@ -96,6 +96,7 @@ class CommandWriter : public ofThread
     Config &m_config = m_config.getInstance();
 
 public:
+    ofEvent<void> on_object_detected;
     bool m_found = false;
 
     CommandWriter() {}
@@ -166,12 +167,11 @@ public:
                 m_found = result != "detections=0";
                 cout << "m_found detected" << m_found << " " << ">" << result << "<" << endl;
 
-                /*   if (m_found)
-                  {
-                      cout << "object command  detected................................" << result << endl;
-                      // terminate();
-                      //
-                  } */
+                if (m_found)
+                {
+                    // Notify the main application that an object has been detected
+                    ofNotifyEvent(on_object_detected);
+                }
 
                 m_processing = false;
             }
