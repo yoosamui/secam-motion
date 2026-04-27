@@ -197,57 +197,6 @@ void ofApp::update()
     {
         if (m_timex_add_probe.elapsed())
         {
-            // 1. If already detected → stop everything
-            /* if (m_objectdetected)
-            {
-                cout << "Object already detected, skip probing." << endl;
-                m_timex_add_probe.reset();
-                m_objectdetected = false;
-                m_add_detection_probe = false;
-                return;
-            }
-            else
- */
-            // 2. Check detector result
-            if (m_cmd_image_writer.m_found && !m_objectdetected)
-            {
-                common::log("Object detected by detector.");
-
-                m_objectdetected = true;
-                m_add_detection_probe = false;
-
-                // 👉 Start recording here if needed
-                // m_is_recording = true;
-
-                //  m_timex_add_probe.reset();
-                //   return;
-            }
-
-            // 3. No detection → try probes
-            if (/*m_add_detection_probe &&*/ !m_objectdetected)
-            {
-                std::cout << "Object not detected, adding probe..." << std::endl;
-
-                if (m_add_detection_probe_count++ <= 2) // Try up to 3 times
-                {
-                    // m_add_detection_probe_count = 0;
-                    std::cout << "[!] Max probe attempts reached. Stop probing. " << m_add_detection_probe_count << std::endl;
-                    m_add_detection_probe = true;
-                }
-                else if (m_add_detection_probe)
-                {
-                    saveDetectionImage();
-                    m_cmd_image_writer.setPath(m_detection_image);
-
-                    std::cout << "[ * ] >>> Add probe: " << m_detection_image << std::endl;
-
-                    m_cmd_image_writer.add(m_frame);
-
-                    std::cout << "[ * ] >>> Elapsed: "
-                              << (m_timex_add_probe.elapsed_millis() / 1000)
-                              << " s" << std::endl;
-                }
-            }
 
             m_timex_add_probe.set();
         }
