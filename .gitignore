@@ -22,6 +22,8 @@ bin/secam-motion
 bin/objdetector
 *.log
 server
+bin/data/yolov3-tiny.weights
+bin/data/yolov3.weights
 
 
 # Precompiled Headers
