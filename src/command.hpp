@@ -156,7 +156,7 @@ public:
                     sprintf(buff, "%s/image%.2d.jpg", m_filename.c_str(), ++m_count);
                     string filename(buff);
                     imwrite(filename, image);
-                    common::log("add probe:" + to_string(m_count));
+                    //  common::log("add probe:" + to_string(m_count));
                 }
 
                 // string command = "bash start-detector.sh " + m_directory + " " + m_filename;
@@ -165,10 +165,10 @@ public:
                 auto result = common::exec(command.c_str());
                 common::log(common::trim(result));
                 m_found = result != "detections=0";
-                cout << "m_found detected" << m_found << " " << ">" << result << "<" << endl;
 
                 if (m_found)
                 {
+                    // cout << "m_found detected" << " " << ">" << result << "<" << endl;
                     // Notify the main application that an object has been detected
                     ofNotifyEvent(on_object_detected);
                 }

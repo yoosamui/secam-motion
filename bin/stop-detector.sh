@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pkill ffmpeg
+exit
 PIDFILE="/tmp/secam-recorder.pid"
 
 if [ ! -f "$PIDFILE" ]; then

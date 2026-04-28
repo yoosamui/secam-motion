@@ -14,7 +14,7 @@ tags
 *.lo
 *.o
 *.obj
-
+*.onnx
 obj/
 *.cfg
 *.xml
