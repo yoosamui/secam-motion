@@ -36,9 +36,9 @@ if [ "$result" == "detections=0" ]; then
 
     file=$1
 
-  #  rm -f $file
+    rm -f $file
     
- #   file=$2
+    file=$2
     
     rm -f $file
     
